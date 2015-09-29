@@ -1,0 +1,16 @@
+<h1>Actions</h1>
+<button type="button" class="btn btn-default" ng-click="open('dsi')"
+        title="Choisir un agent depuis la bdd rh P8">Ajouter un Chargé de cours</button>
+<button type="button" class="btn btn-default" ng-click="open('ied')"
+        title="Création d'un nouvel agent non préalablement enregistré dans le SI de Paris8">Ajouter un Titulaire</button>
+<button type="button" class="btn btn-default" ng-click="open('associate')"
+        title="Association d'un Agent avec une EC">Associer Agent / EC</button>
+
+<h1>Agents</h1>
+<div class="well">Filtre: <input type="text" ng-model="filter_query" /></div>
+<ul>
+    <li ng-repeat="a in agents | filter:filter_query">
+        <a ng-click="editAgent(a)" title="{{ a | json}}">{{ a.last_name }} {{ a.first_name1 }}</a>
+        <a ng-click="delAgent(a.id)">X</a>
+    </li>
+</ul>
