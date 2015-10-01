@@ -156,6 +156,8 @@ class Agent(models.Model):
     def email(self):
         return self.personal_email
 
+
+
 class EC(models.Model):
     code = models.CharField(max_length=8)
     label = models.CharField(max_length=128)
