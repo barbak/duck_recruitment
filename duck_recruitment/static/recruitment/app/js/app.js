@@ -1,6 +1,11 @@
 var myApp = angular.module('myApp', [
-    'ui.bootstrap',
-    'ngRoute'
+
+    'ngRoute',
+    'servicesEtapes',
+    'servicesEcs',
+    'servicesPersonneDsi',
+    'servicesAgent',
+    'ui.bootstrap'
 ]);
 
 myApp.config(['$routeProvider', '$httpProvider',

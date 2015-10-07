@@ -1,16 +1,15 @@
-<h1>Actions</h1>
-<button type="button" class="btn btn-default" ng-click="open('dsi')"
-        title="Choisir un agent depuis la bdd rh P8">Ajouter un Chargé de cours</button>
-<button type="button" class="btn btn-default" ng-click="open('ied')"
-        title="Création d'un nouvel agent non préalablement enregistré dans le SI de Paris8">Ajouter un Titulaire</button>
-<button type="button" class="btn btn-default" ng-click="open('associate')"
-        title="Association d'un Agent avec une EC">Associer Agent / EC</button>
 
-<h1>Agents</h1>
-<div class="well">Filtre: <input type="text" ng-model="filter_query" /></div>
-<ul>
-    <li ng-repeat="a in agents | filter:filter_query">
-        <a ng-click="editAgent(a)" title="{{ a | json}}">{{ a.last_name }} {{ a.first_name1 }}</a>
-        <a ng-click="delAgent(a.id)">X</a>
-    </li>
-</ul>
+<div class="well">
+
+    <select>
+        <option ng-repeat="etape in etapes" ng-click="listEc(etape)">{{ etape.id }} {{ etape.cod_etp }} {{ etape.cod_vrs_vet }}</option>
+    </select>
+    <table class="table table-bordered">
+        <tr ng-repeat="ec in ecs">
+            <td>{{ ec.code_ec }}</td>
+            <td>{{ ec.lib_ec }}</td>
+            <td>{{ ec.type_ec }}</td>
+            <td>{{ personne }} <span class="btn btn-success" ng-click="searchPersonne(ec.code_ec)">Ajouter une personne</span></td>
+        </tr>
+    </table>
+</div>

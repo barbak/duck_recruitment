@@ -1,13 +1,21 @@
+# coding=utf-8
+from __future__ import unicode_literals
 import json
 import datetime
 from django.views.generic import TemplateView
 from django.shortcuts import render
+from django_apogee.models import EtpGererCge, Etape
+from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework import views
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import CCOURS_Individu, Agent# , BaseIndividu
-from .serializers import CCOURS_IndividuSerializer, AgentSerializer #, BaseIndividuSerializer
+
+from duck_recruitment.filters import EcFilter, CcourIndividuFilter
+from .models import CCOURS_Individu, Ec, Agent, EtapeVet, EtatHeure, AllEcAnnuel  # , BaseIndividu
+from .serializers import CCOURS_IndividuSerializer, AgentSerializer, EcSerializer, EtapeSerializer, EtatHeureSerializer, \
+    AllEcAnnuelSerializer
+
 
 class DeclareAgentView(TemplateView):
     template_name = "duck_recruitment/declare_agent.html"
@@ -17,18 +25,47 @@ class DeclareAgentView(TemplateView):
 class CCOURS_IndividuViewSet(viewsets.ModelViewSet):
     queryset = CCOURS_Individu.objects.using('ccours').all()
     serializer_class = CCOURS_IndividuSerializer
+    lookup_field = 'numero'
+    paginate_by = 20
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = CcourIndividuFilter
+
 
 
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all()
     serializer_class = AgentSerializer
 
-    def get_queryset(self):
-        pk = self.request.query_params.get('pk', None)
-        if pk:
-            return self.queryset.filter(pk=pk)
 
-        return self.queryset
+
+
+
+class EcViewSet(viewsets.ModelViewSet):
+    """
+    permet de récupérer les ec
+    filter les etapes d'apogee
+    """
+    queryset = Ec.objects.exclude(type_ec__in=['CSEM', 'SEM', 'CVET', 'VETM', 'BLOC', 'UE'])
+    paginate_by = 30
+    serializer_class = EcSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = EcFilter
+
+
+class EtapeViewSet(viewsets.ModelViewSet):
+    queryset = EtapeVet.objects.filter(cod_cmp='034')
+    serializer_class = EtapeSerializer
+
+
+class EtatHeureViewSet(viewsets.ModelViewSet):
+    queryset = EtatHeure.objects.all()
+    serializer_class = EtatHeureSerializer
+
+
+class AllEcAnnuelViewSet(viewsets.ModelViewSet):
+    queryset = AllEcAnnuel.objects.all()
+    serializer_class = AllEcAnnuelSerializer
+
 
 # class BaseIndividuViewSet(viewsets.ModelViewSet):
 #     queryset = BaseIndividu.objects.all()

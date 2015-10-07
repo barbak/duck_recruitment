@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h3 class="modal-title">Ajouter une persone</h3>
+</div>
+<div class="modal-body">
+    <div>{{ message }}</div>
+    <div>Taper le nom et prénom de la personne pour l'ec {{ code_ec }}</div>
+    <div class="well">
+        <input type="text"
+               ng-model="pers" placeholder="Recherche chargé de cours"
+               typeahead="personne as personne.nom_pat + ' ' + personne.numero for personne in getPersonne($viewValue)" typeahead-loading="recherche"
+               typeahead-no-results="Pas de résultat"
+               typeahead-min-length="3"
+
+               class="form-control">
+        <i ng-show="recherche" class="glyphicon glyphicon-refresh"></i>
+        <div ng-show="noResults">
+          <i class="glyphicon glyphicon-remove"></i> aucune personne
+        </div>
+
+    </div>
+</div>
+<div class="modal-footer">
+
+    <button class="btn btn-primary" ng-click="addPersonne(pers)">ajouter</button>
+    <button class="btn btn-primary" ng-click="$close()">Fermer</button>
+</div>
