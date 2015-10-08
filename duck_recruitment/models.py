@@ -1,11 +1,9 @@
 # -*- coding: utf8 -*-
 from __future__ import unicode_literals
-
-from django.core.urlresolvers import reverse
 from django.db import models
 from django_apogee.models import Etape
 from duck_recruitment.managers import EcManager
-import requests
+
 
 class CCOURS_Individu(models.Model):
     id = models.IntegerField(db_column='INDIV_ID', primary_key=True)
@@ -38,17 +36,17 @@ class CCOURS_Individu(models.Model):
 
 
 class Titulaire(models.Model):
-    GENDER_CHOICES = (
-        ('M', 'Homme'), ('F', 'Femme')
-    )
-    last_name = models.CharField(u"Nom patronymique", max_length=30, null=True)
-    common_name = models.CharField(u"Nom d'époux", max_length=30, null=True, blank=True)
-    first_name1 = models.CharField(u"Prénom", max_length=30)
-    first_name2 = models.CharField(u"Deuxième prénom", max_length=30, null=True, blank=True)
-    first_name3 = models.CharField(u"Troisième prénom", max_length=30, null=True, blank=True)
-    personal_email = models.EmailField("Email", unique=True, null=True)
-    sex = models.CharField(u'sexe', max_length=1, choices=GENDER_CHOICES, null=True)
-    birthday = models.DateField('date de naissance', null=True)
+    numero = models.IntegerField(null=True, blank=True)
+    nom_pat = models.CharField(max_length=100, null=True)
+    nom_usuel = models.CharField(max_length=100, null=True, blank=True)
+    prenom = models.CharField(max_length=100, null=True)
+    dnaissance = models.DateField(null=True, blank=True)
+    mail = models.CharField(max_length=254, null=True, blank=True)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        super(Titulaire, self).save(force_insert, force_update, using, update_fields)
+        self.numero = self.id
+        super(Titulaire, self).save(force_insert, force_update, using, update_fields)
 
 
 class Agent(models.Model):
@@ -66,64 +64,28 @@ class Agent(models.Model):
     birthday = models.DateField('date de naissance', null=True)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        print self.individu_id, self.type
         self.id = self.individu_id
         if self.type == 'charge':
-            self.copy_dsi()
+            self._copy_dsi()
         else:
-            self.copy_tit()
+            self._copy_tit()
         super(Agent, self).save(force_insert, force_update, using, update_fields)
 
-    def copy_tit(self):
-        pass
+    def _copy_tit(self):
+        ind = Titulaire.objects.get(numero=self.individu_id)
+        self._copy_ind(ind)
 
-    def copy_dsi(self):
+    def _copy_dsi(self):
         ind = CCOURS_Individu.objects.using('ccours').get(numero=self.individu_id)
+        self._copy_ind(ind)
+
+    def _copy_ind(self, ind):
         self.last_name = ind.nom_pat
         self.common_name = ind.nom_usuel
         self.first_name1 = ind.prenom
         self.personal_email = ind.mail
         self.birthday = ind.dnaissance
-
-
-
-    @property
-    def family_name(self):
-        """
-        (en), nom patronymique (fr)
-        """
-        return self.last_name
-
-    @property
-    def use_name(self):
-        """
-        use name (en), nom d'usage (fr)
-        """
-        return self.common_name
-
-    @property
-    def first_name(self):
-        """
-        first name (en), prénom (fr)
-        """
-        return self.first_name1
-
-    @property
-    def first_names(self):
-        """
-        first names (en), prénoms (fr)
-        """
-        first_names = [self.first_name1]
-        if self.first_name2:
-            first_names.append(self.first_name2)
-
-        if self.first_name3:
-            first_names.append(self.first_name3)
-
-        return first_names
-
-    @property
-    def email(self):
-        return self.personal_email
 
 
 class EtapeVet(models.Model):

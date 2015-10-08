@@ -5,6 +5,7 @@ var myApp = angular.module('myApp', [
     'servicesEcs',
     'servicesPersonneDsi',
     'servicesAgent',
+    'servicesEtatHeure',
     'ui.bootstrap'
 ]);
 

@@ -1,6 +1,6 @@
 
 <div class="well">
-
+    {{ bidule }}
     <select>
         <option ng-repeat="etape in etapes" ng-click="listEc(etape)">{{ etape.id }} {{ etape.cod_etp }} {{ etape.cod_vrs_vet }}</option>
     </select>
@@ -9,7 +9,8 @@
             <td>{{ ec.code_ec }}</td>
             <td>{{ ec.lib_ec }}</td>
             <td>{{ ec.type_ec }}</td>
-            <td>{{ personne }} <span class="btn btn-success" ng-click="searchPersonne(ec.code_ec)">Ajouter une personne</span></td>
+            <td><ul><li ng-repeat="agent in ec.agents">{{ agent.info_perso}}</li></ul></td>
+            <td> <span class="btn btn-success" ng-click="searchPersonne(ec)">Ajouter une personne</span></td>
         </tr>
     </table>
 </div>

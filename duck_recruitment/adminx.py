@@ -27,6 +27,8 @@ from xadmin.views import filter_hook
 #     title = 'Accueil'
 #     widget_customiz = False
 # xadmin.site.register_view(r'^recruitment/$', RecruitmentDashboard, 'recruitment_dashboard')
+from duck_recruitment.models import Titulaire
+
 
 class RecruitmentDashboard(views.Dashboard):
     base_template = "duck_recruitment/declare_agent.html"
@@ -48,6 +50,6 @@ class RecruitmentDashboard(views.Dashboard):
 
 xadmin.site.register_view(r'^recruitment/$', RecruitmentDashboard, 'recruitment_dashboard')
 
-
+xadmin.site.register(Titulaire)
 
 # xadmin.site.register(Recruit)

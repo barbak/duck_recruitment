@@ -1,28 +1,38 @@
 
 myApp.controller('RecruitmentCtrl',
-    ['$scope', '$modal', '$http', '$log', 'Etape', 'Ec', 'PersonneDsi',
-    function ($scope, $modal, $http, $log, Etape, Ec, PersonneDsi) {
+    ['$scope', '$modal', '$http', '$log', 'Etape', 'Ec', 'PersonneDsi', 'EtatHeure',
+    function ($scope, $modal, $http, $log, Etape, Ec, PersonneDsi, EtatHeure) {
     $scope.agents = [];
-    $scope.ecs = Ec.ec_by_etape({id: '10' }).success(function(data){
-            $scope.ecs = data.results
-        });
-    $scope.etapes = Etape.query();
 
+    $scope.etapes = Etape.query();
+    var getAgent = function(ec){
+        EtatHeure.search(ec.code_ec).success(function(data){
+            ec.agents = data;
+        });
+    };
     $scope.listEc = function(etape){
         Ec.ec_by_etape(etape).success(function(data){
-            $scope.ecs = data.results
+            $scope.ecs = data.results;
+            ecs = $scope.ecs;
+            console.log('ici');
+            for (var i = 0, length=ecs.length; i<length; i++){
+               getAgent(ecs[i]);
+            }
         }).error(function(data, status, headers, config) {
             $scope.ecs = 'Erreur de chargement, serveur indisponible';
         });
     };
+    $scope.listEc({id: '10' });
+    $scope.$on('addPersonneDone', function(event, ec){
+        getAgent(ec);
+    });
 
-    $scope.searchPersonne = function(code_ec){
-        console.log(code_ec);
+    $scope.searchPersonne = function(ec){
         var modalInstance = $modal.open({
             templateUrl: '/static/recruitment/app/partials/addPersonne.html',
             controller: 'SearchCtrl',
             resolve: {
-                code_ec: function(){return code_ec}
+                ec: function(){return ec}
             }
         });
     };
@@ -31,19 +41,21 @@ myApp.controller('RecruitmentCtrl',
 
 
 myApp.controller('SearchCtrl',
-    ['$scope', '$modalInstance', 'code_ec',  '$http', '$log', 'PersonneDsi', 'Agent',
-    function ($scope, $modalInstance, code_ec, $http, $log, PersonneDsi, Agent) {
-        $scope.code_ec = code_ec;
+    ['$rootScope', '$scope', '$modalInstance', 'ec',  '$http', '$log', 'PersonneDsi', 'Agent', 'EtatHeure',
+    function ($rootScope, $scope, $modalInstance, ec, $http, $log, PersonneDsi, Agent, EtatHeure) {
+
+        $scope.ec = ec;
         $scope.getPersonne =  function(value){
             return PersonneDsi.search(value).then(function(response){return response.data.results});
         };
-        $scope.addPersonne = function(personne, code_ec){
-            Agent.resource().save({individu_id:personne.numero,type:'charge', annee:'2015' }).$promise.then(function(){
-                console.log('reussi');
+        $scope.addPersonne = function(personne, ec){
+            Agent.resource().save({individu_id:personne.numero, type: personne.type, annee:'2015', code_ec:ec.code_ec}).$promise.then(function(){
                 $scope.message = 'Opération réussi';
             }, function(){
-                console.log('merde');
                $scope.message = 'Echec';
+            }).then(function(){
+                $rootScope.$broadcast('addPersonneDone', ec);
+
             });
         }
 

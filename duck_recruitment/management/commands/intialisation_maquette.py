@@ -77,5 +77,5 @@ class Command(BaseCommand):
                 a.etape.add(x)
 
     def handle(self, *args, **options):
-        # self.init_etape()
+        self.init_etape()
         self.init_ec()

@@ -45,6 +45,21 @@ servicesAgent.factory('Agent', ['$resource', '$http', function($resource, $http)
         return $resource('/recruitment/v1/agents/:agentId',{}, {
            query:  {method: 'GET', params: {agentId: '@agentId'}, isArray: true}
         });
-    }
+    };
     return {resource: resource}
+}]);
+
+
+var servicesEtatHeure = angular.module('servicesEtatHeure', ['ngResource']);
+
+servicesEtatHeure.factory('EtatHeure', ['$resource', '$http', function($resource, $http){
+    var resource = function(){
+        return $resource('/recruitment/v1/etat_heure/:EtatHeureId',{}, {
+           query:  {method: 'GET', params: {EtatHeureId: '@EtatHeureId'}, isArray: true}
+        });
+    };
+    var search = function(val){
+        return $http.get('/recruitment/v1/etat_heure', {params: {ec: val}, isArray: true});
+    };
+    return {resource: resource, search: search}
 }]);
