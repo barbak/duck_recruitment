@@ -1,6 +1,5 @@
 
 <div class="well">
-    {{ bidule }}
     <select>
         <option ng-repeat="etape in etapes" ng-click="listEc(etape)">{{ etape.id }} {{ etape.cod_etp }} {{ etape.cod_vrs_vet }}</option>
     </select>
@@ -9,8 +8,26 @@
             <td>{{ ec.code_ec }}</td>
             <td>{{ ec.lib_ec }}</td>
             <td>{{ ec.type_ec }}</td>
-            <td><ul><li ng-repeat="agent in ec.agents">{{ agent.info_perso}}</li></ul></td>
-            <td> <span class="btn btn-success" ng-click="searchPersonne(ec)">Ajouter une personne</span></td>
+            <td><div ng-repeat="agent in ec.agents" class="clearfix">
+                    <div class="pull-left">{{ agent.info_perso}}</div>
+                    <div class="btn btn-xs btn-warning pull-right" ng-if="!agent.valider"
+                                                ng-click="delete_agent(agent, ec)">Suprimer<span class="glyphicon glyphicon-remove"></span></div>
+                    <div class="btn btn-xs btn-primary pull-right" ng-if="!agent.valider"
+                            ng-click="valider_agent(agent)">Valider <span class="glyphicon glyphicon-ok"></span></div>
+
+                    <div class="label label-success pull-right" ng-if="agent.valider">OK</div>
+                    <hr>
+                </div>
+                <div ng-repeat="invitation in ec.invitations" class="clearfix">
+                    {{ invitation.email }}
+                    <div class="btn btn-xs btn-warning pull-right" ng-if="!invitation.valider"
+                                                ng-click="delete_invitation(invitation, ec)">Suprimer<span class="glyphicon glyphicon-remove"></span></div>
+                    <div class="btn btn-xs btn-primary pull-right" ng-if="!invitation.valider"
+                            ng-click="valider_invitation(invitation)">Valider <span class="glyphicon glyphicon-ok"></span></div>
+                    <div class="label label-success pull-right" ng-if="invitation.valider">OK</div>
+                </div>
+            </td>
+            <td> <span class="btn btn-primary" ng-click="searchPersonne(ec)"><span class="glyphicon glyphicon-plus-sign"></span> Ajouter une personne</span></td>
         </tr>
     </table>
 </div>

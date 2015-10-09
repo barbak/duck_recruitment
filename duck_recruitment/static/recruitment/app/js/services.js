@@ -2,18 +2,17 @@
  * Created by paulguichon on 06/10/2015.
  */
 
-var servicesEtapes = angular.module('servicesEtapes', ['ngResource']);
+var servicesRecrutement = angular.module('servicesRecrutement', ['ngResource']);
 
-servicesEtapes.factory('Etape', ['$resource',
+servicesRecrutement.factory('Etape', ['$resource',
     function($resource){
         return $resource('/recruitment/v1/etapes/:etapeId', {}, {
             query: {method: 'GET', params: {etapeId: '@etapeId'}, isArray: true}
         })
     }]);
 
-var servicesEcs = angular.module('servicesEcs', ['ngResource']);
 
-servicesEcs.factory('Ec', ['$resource', '$http',
+servicesRecrutement.factory('Ec', ['$resource', '$http',
     function($resource, $http){
         var resource = function(){
             return $resource('/recruitment/v1/ecs/:ecId', {}, {
@@ -26,9 +25,7 @@ servicesEcs.factory('Ec', ['$resource', '$http',
         return {resource: resource, ec_by_etape: ec_by_etape}
     }]);
 
-var servicesPersonneDsi = angular.module('servicesPersonneDsi', ['ngResource']);
-
-servicesPersonneDsi.factory('PersonneDsi', ['$resource', '$http', function($resource, $http){
+servicesRecrutement.factory('PersonneDsi', ['$resource', '$http', function($resource, $http){
     var resource = function(){ return $resource('/recruitment/v1/dsi-individus/:individuId', {}, {
         query: {method: 'GET', params: {individuId: '@individuId'}, isArray: true}
     })};
@@ -38,9 +35,7 @@ servicesPersonneDsi.factory('PersonneDsi', ['$resource', '$http', function($reso
     return {resource: resource, search: search}
 }]);
 
-var servicesAgent = angular.module('servicesAgent', ['ngResource']);
-
-servicesAgent.factory('Agent', ['$resource', '$http', function($resource, $http){
+servicesRecrutement.factory('Agent', ['$resource', '$http', function($resource, $http){
     var resource = function(){
         return $resource('/recruitment/v1/agents/:agentId',{}, {
            query:  {method: 'GET', params: {agentId: '@agentId'}, isArray: true}
@@ -49,17 +44,29 @@ servicesAgent.factory('Agent', ['$resource', '$http', function($resource, $http)
     return {resource: resource}
 }]);
 
-
-var servicesEtatHeure = angular.module('servicesEtatHeure', ['ngResource']);
-
-servicesEtatHeure.factory('EtatHeure', ['$resource', '$http', function($resource, $http){
+servicesRecrutement.factory('EtatHeure', ['$resource', '$http', function($resource, $http){
     var resource = function(){
         return $resource('/recruitment/v1/etat_heure/:EtatHeureId',{}, {
-           query:  {method: 'GET', params: {EtatHeureId: '@EtatHeureId'}, isArray: true}
+           query:  {method: 'GET', params: {EtatHeureId: '@EtatHeureId'}, isArray: true},
+            delete: { method: 'DELETE', params: {EtatHeureId: '@id'} }
         });
     };
     var search = function(val){
         return $http.get('/recruitment/v1/etat_heure', {params: {ec: val}, isArray: true});
+    };
+    return {resource: resource, search: search}
+}]);
+
+servicesRecrutement.factory('Invitation', ['$resource', '$http', function($resource, $http){
+
+    var resource = function(){
+        return $resource('/recruitment/v1/invitations_ec/:InvitationEcId',{}, {
+           query:  {method: 'GET', params: {InvitationEcId: '@InvitationEcId'}, isArray: true},
+            delete: { method: 'DELETE', params: {InvitationEcId: '@id'} }
+        });
+    };
+    var search = function(val){
+        return $http.get('/recruitment/v1/invitations_ec', {params: {ec: val}, isArray: true});
     };
     return {resource: resource, search: search}
 }]);

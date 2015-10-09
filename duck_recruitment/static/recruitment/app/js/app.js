@@ -1,11 +1,6 @@
 var myApp = angular.module('myApp', [
-
     'ngRoute',
-    'servicesEtapes',
-    'servicesEcs',
-    'servicesPersonneDsi',
-    'servicesAgent',
-    'servicesEtatHeure',
+    'servicesRecrutement',
     'ui.bootstrap'
 ]);
 

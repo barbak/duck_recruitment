@@ -1,0 +1,81 @@
+{% load staticfiles %}
+<html>
+<head>
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+    <style>
+    #panel-login {
+    max-width: 350px;
+}
+
+    .panel-single {
+    border-radius: 5px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+    margin: 50px auto 20px;
+}
+        #panel-login {
+    max-width: 350px;
+}
+#panel-login .controls {
+    padding: 0 15px 15px !important;
+}
+#panel-login .alert-block {
+    padding: 0;
+}
+#panel-login .alert-block ul {
+    margin: 10px 15px;
+    padding-left: 0;
+}
+#panel-login .alert-block ul li {
+    list-style-type: none;
+}
+    </style>
+</head>
+<body class="login">
+
+
+<div class="container">
+
+  <form action="" method="post" id="login-form">
+    <div class="panel panel-default panel-single" id="panel-login">
+    {% csrf_token %}
+
+      <div class="panel-heading">
+
+        <h2 class="form-signin-heading">Page d'authentification </h2>
+
+      </div>
+      <div class="panel-body">
+
+      <div id="div_id_username" class="row">
+        <div class="controls clearfix">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+          <input class="form-control input-lg" id="id_username" maxlength="254" name="username" type="text" placeholder="Nom d'utilisateur">
+        </div>
+
+        </div>
+      </div>
+
+      <div id="div_id_password" class="row">
+        <div class="controls clearfix">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+          <input class="form-control input-lg" id="id_password" name="password" type="password" placeholder="Mot de passe">
+        </div>
+
+        </div>
+      </div>
+
+
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Se connecter</button>
+        {% if user.is_authenticated %}<a href="{% url 'logout' %}" class="btn btn-primary">deconnection</a>{% endif %}
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+
+</body>
+</html>

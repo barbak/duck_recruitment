@@ -1,6 +1,6 @@
 from django_apogee.models import Etape
 from rest_framework import serializers
-from .models import CCOURS_Individu, Agent, Ec, EtapeVet, AllEcAnnuel, EtatHeure, Titulaire
+from .models import CCOURS_Individu, Agent, Ec, EtapeVet, AllEcAnnuel, EtatHeure, Titulaire, InvitationEc
 
 
 class CCOURS_IndividuSerializer(serializers.ModelSerializer):
@@ -78,3 +78,14 @@ class EcSerializer(serializers.ModelSerializer):
 class EtapeSerializer(serializers.ModelSerializer):
     class Meta:
         model = EtapeVet
+
+
+class InvitationEcSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+
+        invitation = InvitationEc.objects.get_or_create(**validated_data)[0]
+        return invitation
+
+    class Meta:
+        model = InvitationEc

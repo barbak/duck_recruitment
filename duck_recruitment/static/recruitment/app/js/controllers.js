@@ -1,7 +1,7 @@
 
 myApp.controller('RecruitmentCtrl',
-    ['$scope', '$modal', '$http', '$log', 'Etape', 'Ec', 'PersonneDsi', 'EtatHeure',
-    function ($scope, $modal, $http, $log, Etape, Ec, PersonneDsi, EtatHeure) {
+    ['$scope', '$modal', '$http', '$log', 'Etape', 'Ec', 'PersonneDsi', 'EtatHeure', 'Invitation',
+    function ($scope, $modal, $http, $log, Etape, Ec, PersonneDsi, EtatHeure, Invitation) {
     $scope.agents = [];
 
     $scope.etapes = Etape.query();
@@ -10,13 +10,18 @@ myApp.controller('RecruitmentCtrl',
             ec.agents = data;
         });
     };
+    var getInvitation = function(ec){
+        Invitation.search(ec.code_ec).success(function(data){
+            ec.invitations = data;
+        });
+    };
     $scope.listEc = function(etape){
         Ec.ec_by_etape(etape).success(function(data){
             $scope.ecs = data.results;
             ecs = $scope.ecs;
-            console.log('ici');
             for (var i = 0, length=ecs.length; i<length; i++){
                getAgent(ecs[i]);
+               getInvitation(ecs[i]);
             }
         }).error(function(data, status, headers, config) {
             $scope.ecs = 'Erreur de chargement, serveur indisponible';
@@ -25,6 +30,10 @@ myApp.controller('RecruitmentCtrl',
     $scope.listEc({id: '10' });
     $scope.$on('addPersonneDone', function(event, ec){
         getAgent(ec);
+
+    });
+    $scope.$on('addInvitationDone', function(event, ec){
+        getInvitation(ec);
     });
 
     $scope.searchPersonne = function(ec){
@@ -36,13 +45,40 @@ myApp.controller('RecruitmentCtrl',
             }
         });
     };
+    $scope.valider_agent = function(agent){
+        agent.valider = true;
+        i = EtatHeure.resource().save(agent, function(){agent=i});
+    };
+    $scope.valider_invitation = function(invitation){
+        invitation.valider = true;
+        i = Invitation.resource().save(invitation, function(){invitation=i});
+    };
 
+    $scope.delete_invitation = function(invitation, ec){
+        if (!invitation.valider) {
+            var idx = ec.invitations.indexOf(invitation);
+            i = Invitation.resource().get({InvitationEcId: invitation.id}, function () {
+                i.$delete(function () {
+                    ec.invitations.splice(idx, 1);
+                });});}};
+
+
+    $scope.delete_agent = function(agent, ec){
+        if (!agent.valider) {
+            var idx = ec.agents.indexOf(agent);
+            i = EtatHeure.resource().get({EtatHeureId: agent.id}, function () {
+                i.$delete(function () {
+                    ec.agents.splice(idx, 1);
+                });
+            });
+        }
+    };
 }]);
 
 
 myApp.controller('SearchCtrl',
-    ['$rootScope', '$scope', '$modalInstance', 'ec',  '$http', '$log', 'PersonneDsi', 'Agent', 'EtatHeure',
-    function ($rootScope, $scope, $modalInstance, ec, $http, $log, PersonneDsi, Agent, EtatHeure) {
+    ['$rootScope', '$scope', '$modalInstance', 'ec', '$modal', '$http', '$log', 'PersonneDsi', 'Agent', 'EtatHeure',
+    function ($rootScope, $scope, $modalInstance, ec, $modal, $http, $log, PersonneDsi, Agent, EtatHeure) {
 
         $scope.ec = ec;
         $scope.getPersonne =  function(value){
@@ -57,6 +93,28 @@ myApp.controller('SearchCtrl',
                 $rootScope.$broadcast('addPersonneDone', ec);
 
             });
-        }
+        };
+        $scope.createInvitation =  function(ec){
+            $modalInstance.close();
+            var modalInstance = $modal.open({
+            templateUrl: '/static/recruitment/app/partials/createInvitation.html',
+                controller: 'InvitationCtrl',
+                resolve: {
+                     ec: function(){return ec}
+                }
+            });
+        };
 
+}]);
+
+
+myApp.controller('InvitationCtrl',
+    ['$rootScope', '$scope', '$modalInstance', 'ec', 'Invitation',
+    function ($rootScope, $scope, $modalInstance, ec, Invitation) {
+
+        $scope.ec = ec;
+        $scope.createInvitation =  function(){
+            Invitation.resource().save({ec: ec.code_ec, email: $scope.email}).$promise.then(function(){
+            $rootScope.$broadcast('addInvitationDone', ec);});
+        };
 }]);

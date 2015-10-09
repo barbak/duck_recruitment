@@ -64,7 +64,6 @@ class Agent(models.Model):
     birthday = models.DateField('date de naissance', null=True)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        print self.individu_id, self.type
         self.id = self.individu_id
         if self.type == 'charge':
             self._copy_dsi()
@@ -88,6 +87,47 @@ class Agent(models.Model):
         self.birthday = ind.dnaissance
 
 
+
+    @property
+    def family_name(self):
+        """
+        (en), nom patronymique (fr)
+        """
+        return self.last_name
+
+    @property
+    def use_name(self):
+        """
+        use name (en), nom d'usage (fr)
+        """
+        return self.common_name
+
+    @property
+    def first_name(self):
+        """
+        first name (en), prénom (fr)
+        """
+        return self.first_name1
+
+    @property
+    def first_names(self):
+        """
+        first names (en), prénoms (fr)
+        """
+        first_names = [self.first_name1]
+        if self.first_name2:
+            first_names.append(self.first_name2)
+
+        if self.first_name3:
+            first_names.append(self.first_name3)
+
+        return first_names
+
+    @property
+    def email(self):
+        return self.personal_email
+
+
 class EtapeVet(models.Model):
     cod_etp = models.ForeignKey(Etape)
     cod_vrs_vet = models.CharField(max_length=3)
@@ -107,8 +147,23 @@ class Ec(models.Model):
 class AllEcAnnuel(models.Model):
     agent = models.ForeignKey(Agent)
     annee = models.CharField(max_length=4, default='2015')
+    date_creation = models.DateField(auto_now_add=True)
 
 
 class EtatHeure(models.Model):
     all_ec_annuel = models.ForeignKey(AllEcAnnuel)
     ec = models.ForeignKey(Ec)
+    forfaitaire = models.BooleanField(default=True)
+    nombre_heure_estime = models.FloatField(null=True, blank=True)
+    valider = models.BooleanField(default=False)
+    date_creation = models.DateField(auto_now_add=True)
+
+
+class InvitationEc(models.Model):
+    annee = models.CharField(max_length=4, default='2015')
+    ec = models.ForeignKey(Ec)
+    email = models.EmailField()
+    valider = models.BooleanField(default=False)
+    numero = models.IntegerField(null=True)
+    date_creation = models.DateField(auto_now_add=True)
+    date_acceptation = models.DateField(null=True)

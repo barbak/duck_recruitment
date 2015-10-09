@@ -1,0 +1,17 @@
+<div class="modal-header">
+    <h3 class="modal-title">Ajouter une persone</h3>
+</div>
+<div class="modal-body">
+    <div>{{ message }}</div>
+    <div>Taper l'email de la personne à inviter pour l'ec {{ ec.code_ec }}</div>
+    <div class="well">
+        <input type="text"
+               ng-model="email" placeholder="email"
+               class="form-control">
+
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="createInvitation()">Valider l'invitation</button>
+    <button class="btn btn-warning" ng-click="$close()">Fermer</button>
+</div>

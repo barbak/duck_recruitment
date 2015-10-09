@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals
 import django_filters
-from duck_recruitment.models import Ec, CCOURS_Individu, EtatHeure, Titulaire
+from duck_recruitment.models import Ec, CCOURS_Individu, EtatHeure, Titulaire, InvitationEc
 
 
 class EcFilter(django_filters.FilterSet):
@@ -35,3 +35,11 @@ class TitulaireFilter(django_filters.FilterSet):
     class Meta:
         model = Titulaire
         filter_fields = ['nom_pat', 'id', 'pk']
+
+
+class InvitationEcFilter(django_filters.FilterSet):
+    ec = django_filters.CharFilter(name='ec__code_ec')
+
+    class Meta:
+        model = InvitationEc
+        filter_fields = ['ec__code_ec']

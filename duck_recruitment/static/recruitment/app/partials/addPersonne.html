@@ -18,9 +18,11 @@
         </div>
 
     </div>
+    <button class="btn btn-success" ng-click="addPersonne(pers, ec)"><span class="glyphicon glyphicon-ok"></span> Valider la personne selectionnée </button>
 </div>
 <div class="modal-footer">
 
-    <button class="btn btn-primary" ng-click="addPersonne(pers, ec)">ajouter</button>
-    <button class="btn btn-primary" ng-click="$close()">Fermer</button>
+    <button class="btn btn-primary" ng-click="createInvitation(ec)"><span class="glyphicon glyphicon-plus-sign"></span> Inviter une personne inconue du système</button>
+
+    <button class="btn btn-warning" ng-click="$close()"><span class="glyphicon glyphicon-remove"></span> Fermer</button>
 </div>

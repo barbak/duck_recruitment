@@ -3,10 +3,11 @@ from __future__ import unicode_literals
 from django.views.generic import TemplateView
 from rest_framework import filters
 from rest_framework import viewsets
-from duck_recruitment.filters import EcFilter, CcourIndividuFilter, EtatHeureFilter, TitulaireFilter
-from .models import CCOURS_Individu, Ec, Agent, EtapeVet, EtatHeure, AllEcAnnuel, Titulaire  # , BaseIndividu
+from duck_recruitment.filters import EcFilter, CcourIndividuFilter, EtatHeureFilter, TitulaireFilter, InvitationEcFilter
+from .models import CCOURS_Individu, Ec, Agent, EtapeVet, EtatHeure, AllEcAnnuel, Titulaire, \
+    InvitationEc  # , BaseIndividu
 from .serializers import CCOURS_IndividuSerializer, AgentSerializer, EcSerializer, EtapeSerializer, EtatHeureSerializer, \
-    AllEcAnnuelSerializer, TitulaireSerializer
+    AllEcAnnuelSerializer, TitulaireSerializer, InvitationEcSerializer
 
 
 class DeclareAgentView(TemplateView):
@@ -51,7 +52,7 @@ class EcViewSet(viewsets.ModelViewSet):
     permet de récupérer les ec
     filter les etapes d'apogee
     """
-    queryset = Ec.objects.exclude(type_ec__in=['CSEM', 'SEM', 'CVET', 'VETM', 'BLOC', 'UE'])
+    queryset = Ec.objects.exclude(type_ec__in=['CSEM', 'SEM', 'CVET', 'VETM', 'BLOC', 'UE', 'PAR'])
     paginate_by = 30
     serializer_class = EcSerializer
     filter_backends = (filters.DjangoFilterBackend,)
@@ -80,3 +81,10 @@ class TitulaireViewSet(viewsets.ModelViewSet):
     queryset = Titulaire.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = TitulaireFilter
+
+
+class InvitationEcViewSet(viewsets.ModelViewSet):
+    serializer_class = InvitationEcSerializer
+    queryset = InvitationEc.objects.all()
+    filter_class = InvitationEcFilter
+    filter_backends = (filters.DjangoFilterBackend,)
