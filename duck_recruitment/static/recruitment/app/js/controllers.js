@@ -30,7 +30,7 @@ myApp.controller('RecruitmentCtrl',
             $scope.ecs = 'Erreur de chargement, serveur indisponible';
         });
     };
-    $scope.listEc({id: '10' });
+    $scope.listEc({id: $scope.etapes[0] });
     $scope.$on('addPersonneDone', function(event, ec){
         getAgent(ec);
 
