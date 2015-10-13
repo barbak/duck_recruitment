@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_apogee', '0002_auto_20150923_1620'),
+        ('django_apogee', '0003_auto_20151009_1115'),
     ]
 
     operations = [
@@ -40,6 +40,37 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='SettingsEtapes',
+            fields=[
+                ('etape_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='django_apogee.Etape')),
+            ],
+            options={
+                'db_table': 'duck_inscription_settingsetape',
+                'managed': False,
+            },
+            bases=('django_apogee.etape',),
+        ),
+        migrations.CreateModel(
+            name='SettingsEtapeUser',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+            ],
+            options={
+                'db_table': 'duck_inscription_settingsuser_etapes',
+                'managed': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='SettingsUser',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+            ],
+            options={
+                'db_table': 'duck_inscription_settingsuser',
+                'managed': False,
+            },
+        ),
+        migrations.CreateModel(
             name='Agent',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -57,6 +88,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('annee', models.CharField(default='2015', max_length=4)),
+                ('date_creation', models.DateField(auto_now_add=True)),
                 ('agent', models.ForeignKey(to='duck_recruitment.Agent')),
             ],
         ),
@@ -83,7 +115,26 @@ class Migration(migrations.Migration):
             name='EtatHeure',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('forfaitaire', models.BooleanField(default=True)),
+                ('nombre_heure_estime', models.FloatField(null=True, blank=True)),
+                ('valider', models.BooleanField(default=False)),
+                ('date_creation', models.DateField(auto_now_add=True)),
                 ('all_ec_annuel', models.ForeignKey(to='duck_recruitment.AllEcAnnuel')),
+                ('ec', models.ForeignKey(to='duck_recruitment.Ec')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='InvitationEc',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('annee', models.CharField(default='2015', max_length=4)),
+                ('email', models.EmailField(max_length=254)),
+                ('valider', models.BooleanField(default=False)),
+                ('numero', models.IntegerField(null=True)),
+                ('date_creation', models.DateField(auto_now_add=True)),
+                ('date_acceptation', models.DateField(null=True)),
+                ('forfaitaire', models.BooleanField(default=True)),
+                ('nombre_heure_estime', models.FloatField(null=True, blank=True)),
                 ('ec', models.ForeignKey(to='duck_recruitment.Ec')),
             ],
         ),
@@ -91,14 +142,12 @@ class Migration(migrations.Migration):
             name='Titulaire',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('last_name', models.CharField(max_length=30, null=True, verbose_name='Nom patronymique')),
-                ('common_name', models.CharField(max_length=30, null=True, verbose_name="Nom d'\xe9poux", blank=True)),
-                ('first_name1', models.CharField(max_length=30, verbose_name='Pr\xe9nom')),
-                ('first_name2', models.CharField(max_length=30, null=True, verbose_name='Deuxi\xe8me pr\xe9nom', blank=True)),
-                ('first_name3', models.CharField(max_length=30, null=True, verbose_name='Troisi\xe8me pr\xe9nom', blank=True)),
-                ('personal_email', models.EmailField(max_length=254, unique=True, null=True, verbose_name='Email')),
-                ('sex', models.CharField(max_length=1, null=True, verbose_name='sexe', choices=[('M', 'Homme'), ('F', 'Femme')])),
-                ('birthday', models.DateField(null=True, verbose_name='date de naissance')),
+                ('numero', models.IntegerField(null=True, blank=True)),
+                ('nom_pat', models.CharField(max_length=100, null=True)),
+                ('nom_usuel', models.CharField(max_length=100, null=True, blank=True)),
+                ('prenom', models.CharField(max_length=100, null=True)),
+                ('dnaissance', models.DateField(null=True, blank=True)),
+                ('mail', models.CharField(max_length=254, null=True, blank=True)),
             ],
         ),
         migrations.AddField(

@@ -1,0 +1,43 @@
+{% load staticfiles %}
+<html>
+<head>
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+    <style>
+    #panel-login {
+    max-width: 350px;
+}
+
+    .panel-single {
+    border-radius: 5px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+    margin: 50px auto 20px;
+}
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+        <div ng-app="confirmationApp">
+            <div ng-view></div>
+        </div>
+
+</div>
+<script src="{% static "jquery/jquery.min.js" %}"></script>
+<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+<script src="{% static "angular/angular.js" %}"></script>
+<script src="{% static "angular/angular-route.js" %}"></script>
+<script src="{% static "angular/angular-resource.js" %}"></script>
+<script src="{% static "angular/ui-bootstrap-0.13.1.js" %}"></script>
+<script src="{% static "recruitment/app/js/confirmation.js" %}"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

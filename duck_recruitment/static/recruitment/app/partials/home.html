@@ -18,8 +18,8 @@
                     <div class="label label-success pull-right" ng-if="agent.valider">OK</div>
                     <hr>
                 </div>
-                <div ng-repeat="invitation in ec.invitations" class="clearfix">
-                    {{ invitation.email }}
+                <div ng-repeat="invitation in ec.invitations|filter:filter_invit " class="clearfix">
+                    {{ invitation.email }} {{ invitation.id }} {{ invitation.date_acceptation }}
                     <div class="btn btn-xs btn-warning pull-right" ng-if="!invitation.valider"
                                                 ng-click="delete_invitation(invitation, ec)">Suprimer<span class="glyphicon glyphicon-remove"></span></div>
                     <div class="btn btn-xs btn-primary pull-right" ng-if="!invitation.valider"
@@ -27,7 +27,10 @@
                     <div class="label label-success pull-right" ng-if="invitation.valider">OK</div>
                 </div>
             </td>
-            <td> <span class="btn btn-primary" ng-click="searchPersonne(ec)"><span class="glyphicon glyphicon-plus-sign"></span> Ajouter une personne</span></td>
+            <td>
+                <button class="btn btn-primary" ng-click="searchPersonne(ec)"><span class="glyphicon glyphicon-plus-sign"></span> Ajouter une personne</button>
+                <button class="btn btn-primary" ng-click="createInvitation(ec)"><span class="glyphicon glyphicon-plus-sign"></span> Inviter une personne inconue du système</button>
+            </td>
         </tr>
     </table>
 </div>

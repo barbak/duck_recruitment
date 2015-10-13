@@ -10,6 +10,9 @@ myApp.controller('RecruitmentCtrl',
             ec.agents = data;
         });
     };
+    $scope.filter_invit=function(invitation){
+            return invitation.date_acceptation==null;
+    };
     var getInvitation = function(ec){
         Invitation.search(ec.code_ec).success(function(data){
             ec.invitations = data;
@@ -33,9 +36,13 @@ myApp.controller('RecruitmentCtrl',
 
     });
     $scope.$on('addInvitationDone', function(event, ec){
+        getAgent(ec);
         getInvitation(ec);
     });
+    $scope.$on('createInvidation', function(event, ec){
 
+        $scope.createInvitation(ec)
+    });
     $scope.searchPersonne = function(ec){
         var modalInstance = $modal.open({
             templateUrl: '/static/recruitment/app/partials/addPersonne.html',
@@ -45,6 +52,15 @@ myApp.controller('RecruitmentCtrl',
             }
         });
     };
+    $scope.createInvitation =  function(ec){
+            var modalInstance = $modal.open({
+            templateUrl: '/static/recruitment/app/partials/createInvitation.html',
+                controller: 'InvitationCtrl',
+                resolve: {
+                     ec: function(){return ec}
+                }
+            });
+        };
     $scope.valider_agent = function(agent){
         agent.valider = true;
         i = EtatHeure.resource().save(agent, function(){agent=i});
@@ -81,14 +97,18 @@ myApp.controller('SearchCtrl',
     function ($rootScope, $scope, $modalInstance, ec, $modal, $http, $log, PersonneDsi, Agent, EtatHeure) {
 
         $scope.ec = ec;
+        $scope.forfaitaire = true;
         $scope.getPersonne =  function(value){
             return PersonneDsi.search(value).then(function(response){return response.data.results});
         };
         $scope.addPersonne = function(personne, ec){
-            Agent.resource().save({individu_id:personne.numero, type: personne.type, annee:'2015', code_ec:ec.code_ec}).$promise.then(function(){
+            Agent.resource().save({individu_id:personne.numero, type: personne.type, annee:'2015', code_ec:ec.code_ec,
+                forfaitaire: $scope.forfaitaire, heure: $scope.nb_heure}).$promise.then(function(){
                 $scope.message = 'Opération réussi';
+                $scope.pers = null;
             }, function(){
-               $scope.message = 'Echec';
+               $scope.errors = {Erreur: 'Il y a eu une erreur'};
+
             }).then(function(){
                 $rootScope.$broadcast('addPersonneDone', ec);
 
@@ -96,13 +116,7 @@ myApp.controller('SearchCtrl',
         };
         $scope.createInvitation =  function(ec){
             $modalInstance.close();
-            var modalInstance = $modal.open({
-            templateUrl: '/static/recruitment/app/partials/createInvitation.html',
-                controller: 'InvitationCtrl',
-                resolve: {
-                     ec: function(){return ec}
-                }
-            });
+            $rootScope.$broadcast('createInvidation', ec);
         };
 
 }]);
@@ -113,8 +127,19 @@ myApp.controller('InvitationCtrl',
     function ($rootScope, $scope, $modalInstance, ec, Invitation) {
 
         $scope.ec = ec;
+        $scope.forfaitaire = true;
         $scope.createInvitation =  function(){
-            Invitation.resource().save({ec: ec.code_ec, email: $scope.email}).$promise.then(function(){
-            $rootScope.$broadcast('addInvitationDone', ec);});
+            Invitation.resource().save({ec: ec.code_ec, email: $scope.email,
+                forfaitaire: $scope.forfaitaire, nombre_heure_estime: $scope.nb_heure}).$promise.then(function(){
+                $rootScope.$broadcast('addInvitationDone', ec);
+                $scope.errors = null;
+                $scope.message = "L'invitation a bien été envoyé à l'adresse : " + $scope.email
+
+            }, function(request){
+                $scope.errors = request.data;
+                    $scope.message = null;
+                $rootScope.$broadcast('addInvitationDone', ec);
+            });
         };
+
 }]);

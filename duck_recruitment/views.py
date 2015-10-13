@@ -1,8 +1,13 @@
 # coding=utf-8
 from __future__ import unicode_literals
+from datetime import date
+from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from rest_framework import filters
+from rest_framework import views
 from rest_framework import viewsets
+from rest_framework import permissions
+from rest_framework.response import Response
 from duck_recruitment.filters import EcFilter, CcourIndividuFilter, EtatHeureFilter, TitulaireFilter, InvitationEcFilter
 from .models import CCOURS_Individu, Ec, Agent, EtapeVet, EtatHeure, AllEcAnnuel, Titulaire, \
     InvitationEc  # , BaseIndividu
@@ -63,6 +68,12 @@ class EtapeViewSet(viewsets.ModelViewSet):
     queryset = EtapeVet.objects.filter(cod_cmp='034')
     serializer_class = EtapeSerializer
 
+    def get_queryset(self):
+        queryset = super(EtapeViewSet, self).get_queryset()
+        user = User.objects.get(username=self.request.user.username)
+        queryset = queryset.filter(cod_etp__cod_etp__in=user.settings_user.etapes.values_list('cod_etp', flat=True))
+        return queryset
+
 
 class EtatHeureViewSet(viewsets.ModelViewSet):
     queryset = EtatHeure.objects.all()
@@ -88,3 +99,30 @@ class InvitationEcViewSet(viewsets.ModelViewSet):
     queryset = InvitationEc.objects.all()
     filter_class = InvitationEcFilter
     filter_backends = (filters.DjangoFilterBackend,)
+
+
+class ConfirmeInvitation(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        """
+        Return a list of all users.
+        """
+        print request.query_params
+        usernames = [user.username for user in User.objects.all()]
+        return Response(usernames)
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        invitation = InvitationEc.objects.get(id=data['id'])
+        agent = Agent.objects.get_or_create(individu_id=data['numero'])[0]
+        allEc = AllEcAnnuel.objects.get_or_create(agent=agent, annee=invitation.annee)[0]
+        e = EtatHeure.objects.get_or_create(all_ec_annuel=allEc, ec=invitation.ec)[0]
+        e.valider = True
+        e.forfaitaire = invitation.forfaitaire
+        e.nombre_heure_estime = e.nombre_heure_estime
+        e.save()
+        invitation.date_acceptation = date.today()
+        invitation.numero = data['numero']
+        invitation.save()
+        return Response(InvitationEcSerializer(invitation).data)

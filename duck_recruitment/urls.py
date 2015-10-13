@@ -1,3 +1,4 @@
+from django.views.generic import TemplateView
 from rest_framework import routers
 from duck_recruitment import views
 from django.conf.urls import url, include
@@ -14,4 +15,6 @@ router.register(r'v1/invitations_ec', views.InvitationEcViewSet, base_name='invi
 
 urlpatterns = [
     url(r'^', include(router.urls)),
+    url(r'^v1/confirme_invitation$', views.ConfirmeInvitation.as_view(), name='confirme_invitation'),
+    url(r'^confirme_invitation/(?P<pk>\d+)/$', TemplateView.as_view(template_name='confirmation_invitation.html'))
 ]

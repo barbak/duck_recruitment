@@ -21,7 +21,7 @@ servicesRecrutement.factory('Ec', ['$resource', '$http',
         };
         var ec_by_etape = function(etape){
             return $http.get('/recruitment/v1/ecs', {params: {etape: etape.id}, isArray: true});
-        }
+        };
         return {resource: resource, ec_by_etape: ec_by_etape}
     }]);
 

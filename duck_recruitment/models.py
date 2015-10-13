@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 from django.db import models
 from django_apogee.models import Etape
 from duck_recruitment.managers import EcManager
-
+from django.conf import settings
+from mailrobot.models import Mail
 
 class CCOURS_Individu(models.Model):
     id = models.IntegerField(db_column='INDIV_ID', primary_key=True)
@@ -158,6 +159,26 @@ class EtatHeure(models.Model):
     valider = models.BooleanField(default=False)
     date_creation = models.DateField(auto_now_add=True)
 
+    def envoi_mail_information(self):
+        recipients = [self.all_ec_annuel.agent.email if not settings.DEBUG else 'paul.guichon@iedparis8.net']
+        context = {
+                'agent': self.all_ec_annuel.agent,
+            }
+        if self.all_ec_annuel.agent.type == 'tit':
+            template = Mail.objects.get('invitation_titulaire')
+
+        else:
+            template = Mail.objects.get('invitation_charge')
+        mail = template.make_message(recipients=recipients, context=context)
+        mail.send()
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.pk:
+            etat = self.objects.get(pk=self.pk)
+            if self.valider and not etat.valider:
+                self.envoi_mail_information()
+        super(EtatHeure, self).save(force_insert, force_update, using, update_fields)
+
 
 class InvitationEc(models.Model):
     annee = models.CharField(max_length=4, default='2015')
@@ -167,3 +188,55 @@ class InvitationEc(models.Model):
     numero = models.IntegerField(null=True)
     date_creation = models.DateField(auto_now_add=True)
     date_acceptation = models.DateField(null=True)
+    forfaitaire = models.BooleanField(default=True)
+    nombre_heure_estime = models.FloatField(null=True, blank=True)
+
+    def envoi_mail_information(self):
+        recipients = [self.email if not settings.DEBUG else 'paul.guichon@iedparis8.net']
+        context = {
+                'invitation': self,
+            }
+
+        template = Mail.objects.get('invitation_inconnu')
+        mail = template.make_message(recipients=recipients, context=context)
+        mail.send()
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.pk:
+            etat = self.objects.get(pk=self.pk)
+            if self.valider and not etat.valider:
+                self.envoi_mail_information()
+        super(InvitationEc, self).save(force_insert, force_update, using, update_fields)
+
+###
+#  lien pour les etapes des comptes de prof, il faut le remplacer par un systeme de permission générique
+#  c'est uniquement créer pour inviter une dépendance à duck_inscription
+###
+
+
+class SettingsEtapes(Etape):
+    class Meta:
+        db_table = 'duck_inscription_settingsetape'
+        managed = False
+
+
+class SettingsUser(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='settings_user')
+    etapes = models.ManyToManyField(SettingsEtapes, related_name='etapes_settings', through='SettingsEtapeUser')
+
+    class Meta:
+        db_table = 'duck_inscription_settingsuser'
+        managed = False
+
+
+class SettingsEtapeUser(models.Model):
+    settings_user = models.ForeignKey(SettingsUser, db_column='settingsuser_id')
+    settings_etape = models.ForeignKey(SettingsEtapes, db_column='settingsetape_id')
+
+    class Meta:
+        db_table = 'duck_inscription_settingsuser_etapes'
+        managed = False
+
+###
+#  fin de la merde pondu
+###

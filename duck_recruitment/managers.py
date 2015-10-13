@@ -46,22 +46,8 @@ AND ERE.ETA_LSE != 'F' AND DATE_FERMETURE_LIEN IS NULL;''', [etape]).using('orac
             a.save(using='default')
             a.etape.add(etape1)
 
-            # except IntegrityError:
-            #     print ec.code_ec_id
-
-            # self.create(
-            #     etape_id=etape,
-            #     code_lse=ec.code_lse,
-            #     code_ec_id=ec.code_ec_id,
-            #     code_elp_pere=ec.code_elp_pere,
-            #     tem_sec=ec.tem_sec,
-            #     type_ec=ec.type_ec,
-            #     lib_ec=ec.lib_ec,
-            #     order=i,
-            # )
-
 
 class EcManager(models.Manager):
     def get_query_set(self):
-        return super(EcManager, self).get_query_set().exclude(type_ec__in=['VETM'], tem_sec="O").filter(tem_sec='N')
+        return super(EcManager, self).get_query_set().exclude(type_ec__in=['VETM'])
         # return super(EcManager, self).get_query_set()
