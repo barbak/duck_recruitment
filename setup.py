@@ -1,12 +1,13 @@
 from distutils.core import setup
 
 setup(
-    name='duck_recruitment',
+    name='duck_recruitement',
     version='',
-    packages=['', 'duck_recruitment'],
+    packages=['duck_recruitment', 'duck_recruitment.management', 'duck_recruitment.management.commands',
+              'duck_recruitment.migrations'],
     url='',
     license='',
-    author='',
+    author='paulguichon',
     author_email='',
     description=''
 )
