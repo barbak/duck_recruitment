@@ -2,31 +2,9 @@
 from xadmin import views
 import xadmin
 
-from django.http.response import HttpResponse
 from django.views.decorators.cache import never_cache
 from xadmin.views import filter_hook
 
-# from .models import Recruit
-
-# class RecruitmentDashboard(views.Dashboard):
-#     @never_cache
-#     def get(self, request, *args, **kwargs):
-#         self.widgets = self.get_widgets()
-#         return HttpResponse("HELLLO")
-#
-# xadmin.site.register_view(r'^duck_recruitment_main/$', RecruitmentDashboard, 'recruitment_dashboard')
-
-# class RecruitmentDashboard(views.website.IndexView):
-#     widgets = [[{"type": "qbutton", "title": "Gestion candidats",
-#                  "btns": [{'title': 'Déclaration des agents', 'url': 'declare_agent'},
-# #                          {'title': 'Recrues', 'model': Recruit},
-#                             {'title': 'Affectation aux EC', 'url': 'assign_ec_agent'},
-#                           ]},
-#                ]]
-#     site_title = 'Backoffice'
-#     title = 'Accueil'
-#     widget_customiz = False
-# xadmin.site.register_view(r'^recruitment/$', RecruitmentDashboard, 'recruitment_dashboard')
 from duck_recruitment.models import Titulaire
 
 
@@ -52,4 +30,3 @@ xadmin.site.register_view(r'^recruitment/$', RecruitmentDashboard, 'recruitment_
 
 xadmin.site.register(Titulaire)
 
-# xadmin.site.register(Recruit)

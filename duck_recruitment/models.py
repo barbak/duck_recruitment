@@ -160,7 +160,7 @@ class EtatHeure(models.Model):
     date_creation = models.DateField(auto_now_add=True)
 
     def envoi_mail_information(self):
-        recipients = [self.all_ec_annuel.agent.email if not settings.DEBUG else 'paul.guichon@iedparis8.net']
+        recipients = [self.all_ec_annuel.agent.email if not settings.DEBUG else 'paul.guichon@gmail.com']
         context = {
                 'agent': self.all_ec_annuel.agent,
             }
@@ -174,7 +174,7 @@ class EtatHeure(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.pk:
-            etat = self.objects.get(pk=self.pk)
+            etat = EtatHeure.objects.get(pk=self.pk)
             if self.valider and not etat.valider:
                 self.envoi_mail_information()
         super(EtatHeure, self).save(force_insert, force_update, using, update_fields)
@@ -203,7 +203,7 @@ class InvitationEc(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.pk:
-            etat = self.objects.get(pk=self.pk)
+            etat = InvitationEc.objects.get(pk=self.pk)
             if self.valider and not etat.valider:
                 self.envoi_mail_information()
         super(InvitationEc, self).save(force_insert, force_update, using, update_fields)

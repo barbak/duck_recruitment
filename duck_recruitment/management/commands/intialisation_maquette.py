@@ -51,7 +51,10 @@ class Command(BaseCommand):
     def init_etape(self):
         cursor = connections['oracle'].cursor()
         cursor.execute(QUERY_ETAPE)
-        for etape in cursor.fetchall():
+        result = cursor.fetchall()
+        for x in result:
+            print x
+        for etape in result:
             e = Etape.objects.using('oracle').get(cod_etp=etape[0])
             e.save(using='default')
             EtapeVet.objects.get_or_create(cod_etp_id=etape[0], cod_vrs_vet=etape[1], cod_cmp=etape[2])
