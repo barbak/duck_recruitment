@@ -45,9 +45,10 @@ class Titulaire(models.Model):
     mail = models.CharField(max_length=254, null=True, blank=True)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.pk:
+            self.numero = self.pk
         super(Titulaire, self).save(force_insert, force_update, using, update_fields)
-        self.numero = self.id
-        super(Titulaire, self).save(force_insert, force_update, using, update_fields)
+
 
 
 class Agent(models.Model):
