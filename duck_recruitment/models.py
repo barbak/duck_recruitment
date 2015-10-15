@@ -52,7 +52,7 @@ class Titulaire(models.Model):
         super(Titulaire, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
-        return '{} {}'.format(self.nom_pat, self.nom_usuel)
+        return '{} {}'.format(self.nom_pat, self.prenom)
 
 
 class Agent(models.Model):
