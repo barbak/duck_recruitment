@@ -1,4 +1,5 @@
 <div class="modal-header">
+     <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span aria-hidden="true">&times;</span></button>
     <h3 class="modal-title">Ajouter une persone</h3>
 </div>
 <div class="modal-body">
@@ -12,7 +13,7 @@
             </li>
         </ul>
     </div>
-    <div>Taper l'email de la personne à inviter pour l'ec {{ ec.code_ec }}</div>
+    <div class="alert alert-info">Taper l'email de la personne à inviter pour l'ec {{ ec.code_ec }}</div>
     <div class="well form-horizontal">
         <div class="form-group">
             <label for="inputEmail3" class="col-sm-4 control-label"> Email :</label>
@@ -41,6 +42,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" ng-click="createInvitation()">Valider l'invitation</button>
-    <button class="btn btn-warning" ng-click="$close()">Fermer</button>
+    <button class="btn btn-warning" ng-click="$close()"><span class="glyphicon glyphicon-remove"></span> Fermer</button>
+    <button class="btn btn-success" ng-click="createInvitation()"><span class="glyphicon glyphicon-ok"></span> Valider l'invitation</button>
+
 </div>
