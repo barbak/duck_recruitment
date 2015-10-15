@@ -142,6 +142,9 @@ class EtapeVet(models.Model):
     cod_vrs_vet = models.CharField(max_length=3)
     cod_cmp = models.CharField(max_length=3)
 
+    def lib_etp(self):
+        return self.cod_etp.lib_etp
+
 
 class Ec(models.Model):
     id = models.CharField('id element', max_length=8, primary_key=True)
@@ -204,6 +207,7 @@ class InvitationEc(models.Model):
         recipients = [self.email if not settings.DEBUG else 'paul.guichon@iedparis8.net']
         context = {
                 'invitation': self,
+                'ec': self.ec
             }
 
         template = Mail.objects.get(name='invitation_inconnu')
