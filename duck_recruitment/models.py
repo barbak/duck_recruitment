@@ -54,6 +54,9 @@ class Titulaire(models.Model):
     def __str__(self):
         return '{} {}'.format(self.nom_pat, self.prenom)
 
+    class Meta:
+        ordering = ['nom_pat']
+
 
 class Agent(models.Model):
 
