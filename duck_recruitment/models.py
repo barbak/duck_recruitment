@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 from __future__ import unicode_literals
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django_apogee.models import Etape
 from duck_recruitment.managers import EcManager
 from django.conf import settings
@@ -36,6 +37,7 @@ class CCOURS_Individu(models.Model):
         app_label = "duck_recruitment"
 
 
+@python_2_unicode_compatible
 class Titulaire(models.Model):
     numero = models.IntegerField(null=True, blank=True)
     nom_pat = models.CharField(max_length=100, null=True)
@@ -49,6 +51,8 @@ class Titulaire(models.Model):
             self.numero = self.pk
         super(Titulaire, self).save(force_insert, force_update, using, update_fields)
 
+    def __str__(self):
+        return '{} {}'.format(self.nom_pat, self.nom_usuel)
 
 
 class Agent(models.Model):
@@ -163,13 +167,14 @@ class EtatHeure(models.Model):
     def envoi_mail_information(self):
         recipients = [self.all_ec_annuel.agent.email if not settings.DEBUG else 'paul.guichon@gmail.com']
         context = {
-                'agent': self.all_ec_annuel.agent,
-            }
+            'agent': self.all_ec_annuel.agent,
+            'ec': self
+        }
         if self.all_ec_annuel.agent.type == 'tit':
-            template = Mail.objects.get('invitation_titulaire')
+            template = Mail.objects.get(name='invitation_titulaire')
 
         else:
-            template = Mail.objects.get('invitation_charge')
+            template = Mail.objects.get(name='invitation_charge')
         mail = template.make_message(recipients=recipients, context=context)
         mail.send()
 
@@ -198,7 +203,7 @@ class InvitationEc(models.Model):
                 'invitation': self,
             }
 
-        template = Mail.objects.get('invitation_inconnu')
+        template = Mail.objects.get(name='invitation_inconnu')
         mail = template.make_message(recipients=recipients, context=context)
         mail.send()
 
