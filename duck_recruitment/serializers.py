@@ -35,7 +35,7 @@ class EtatHeureSerializer(serializers.ModelSerializer):
     info_perso = serializers.SerializerMethodField()
 
     def get_info_perso(self, obj):
-        return '{} {} {}'.format(obj.all_ec_annuel.agent.last_name, obj.all_ec_annuel.agent.first_name, obj.all_ec_annuel.agent.email)
+        return '{} {} {}'.format(obj.all_ec_annuel.agent.last_name, obj.all_ec_annuel.agent.first_name, obj.all_ec_annuel.agent.email.lower())
 
     def create(self, validated_data):
         e = EtatHeure.objects.get_or_create(ec=validated_data['ec'], all_ec_annuel=validated_data['all_ec_annuel'])[0]
@@ -105,6 +105,8 @@ class EcSerializer(serializers.ModelSerializer):
 class EtapeSerializer(serializers.ModelSerializer):
     class Meta:
         model = EtapeVet
+        fields = ('id', 'cod_etp', "cod_vrs_vet", "cod_cmp", "lib_etp")
+        read_only_fields = ('lib_etp',)
 
 
 class InvitationEcSerializer(serializers.ModelSerializer):
