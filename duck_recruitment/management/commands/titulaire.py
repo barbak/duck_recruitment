@@ -11,8 +11,10 @@ j= """[["BRIDOU", "Morgiane", "", "morgiane.bridou@iedparis8.net"], ["Arnaud", "
 from django.core.management.base import BaseCommand
 from optparse import make_option
 from django.db import connections
-
+import requests
+import simpleldap
 class Command(BaseCommand):
+
 
     option_list = BaseCommand.option_list + (
         make_option('--annee',
@@ -22,13 +24,15 @@ class Command(BaseCommand):
                     default=None,
                     help='annee de remontee'),
     )
-
+    # ?wstoken=ebc4db80360f1f373aa886ee1f270956&wsfunction=core_user_get_users_by_field&username=hhamaoui&moodlewsrestformat=json
     def handle(self, *args, **options):
-        result =  json.loads(j)
-        for x in result:
-            Titulaire.objects.get_or_create(
-                nom_pat =x[0],
-                nom_usuel =x[2],
-                prenom =x[1],
-                mail = x[3]
-            )
+        # url = 'http://moodle.iedparis8.net/webservice/rest/server.php'
+        # param = {
+        #     'wstoken': 'ebc4db80360f1f373aa886ee1f270956',
+        #     'wsfunction': 'core_user_get_users_by_field',
+        #     'field': 'hhamaoui',
+        #     'moodlewsrestformat': 'json'
+        # }
+        # print requests.get(url, params=param).text
+        search = {'base_dn': 'dc=univ-paris8,dc=fr'}
+        conn = simpleldap.Connection('ldap.etud.univ-paris8.fr',dn='cn=admin,dc=univ-paris8,dc=fr', search_defaults=search)
