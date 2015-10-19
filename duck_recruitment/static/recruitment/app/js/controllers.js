@@ -3,8 +3,9 @@ myApp.controller('RecruitmentCtrl',
     ['$scope', '$modal', '$http', '$log', 'Etape', 'Ec', 'PersonneDsi', 'EtatHeure', 'Invitation',
     function ($scope, $modal, $http, $log, Etape, Ec, PersonneDsi, EtatHeure, Invitation) {
     $scope.agents = [];
+    $scope.monEtape = null;
 
-    $scope.etapes = Etape.query();
+
     var getAgent = function(ec){
         EtatHeure.search(ec.code_ec).success(function(data){
             ec.agents = data;
@@ -30,7 +31,11 @@ myApp.controller('RecruitmentCtrl',
             $scope.ecs = 'Erreur de chargement, serveur indisponible';
         });
     };
-    $scope.listEc({id: $scope.etapes[0] });
+    $scope.etapes = Etape.query(function(data){
+        console.log(data);
+        $scope.monEtape = $scope.etapes[0];
+         $scope.listEc({id: $scope.etapes[0].id });
+    });
     $scope.$on('addPersonneDone', function(event, ec){
         getAgent(ec);
 

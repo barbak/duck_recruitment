@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 from django_apogee.models import InsAdmEtp, Individu, Adresse, AnneeUni, ConfAnneeUni, EtpGererCge, InsAdmEtpInitial, \
     Etape
-
+import csv
 from duck_recruitment.models import Ec, EtapeVet, Titulaire
 import json
 __author__ = 'paul'
@@ -34,5 +34,45 @@ class Command(BaseCommand):
         #     'moodlewsrestformat': 'json'
         # }
         # print requests.get(url, params=param).text
-        search = {'base_dn': 'dc=univ-paris8,dc=fr'}
-        conn = simpleldap.Connection('ldap.etud.univ-paris8.fr',dn='cn=admin,dc=univ-paris8,dc=fr', search_defaults=search)
+        if False:
+            filtre = '(&(uid=*)(mail=*etud*)(up8Diplome=L3NEDU))'
+            attr = [
+                'sn',
+                'givenName',
+                'supannEtuId',
+                'uid'
+            ]
+            search = {'base_dn': 'dc=univ-paris8,dc=fr', 'list': 'sn,givenName,supannEtuId'}
+            conn = simpleldap.Connection('ldap.etud.univ-paris8.fr',
+                                         dn='cn=admin,dc=univ-paris8,dc=fr',
+                                         search_defaults=search,
+                                         password='p8SARiH3')
+            results = conn.search(filtre,
+                                  # attrs=attr
+                                  )
+            # print len(results)
+            r = {}
+            with open('eggs.csv', 'wb') as csvfile:
+                spamwriter = csv.writer(csvfile, delimiter=' ',
+                                        quotechar='|', quoting=csv.QUOTE_MINIMAL)
+
+                for x in results:
+                    spamwriter.writerow([x['supannEtuId'][0], x['uid'][0]])
+        else:
+            result = {}
+            with open('eggs.csv', 'rb') as csvfile:
+                spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+                for row in spamreader:
+                    result[row[0]] = row[1]
+            r = []
+            for x in InsAdmEtpInitial.inscrits.using('oracle').filter(cod_etp='L3NEDU'):
+                if str(x.cod_ind.cod_etu) in result.keys():
+                    cod_etu = str(x.cod_ind.cod_etu)
+                    a = [result[cod_etu], '', x.cod_ind.lib_pr1_ind, x.cod_ind.lib_nom_pat_ind,
+                         '{}@foad.iedparis8.net'.format(cod_etu), 'L3NEDU']
+                    r.append(a)
+            with open('cohorts.csv', 'wb') as csvfile:
+                spamwriter = csv.writer(csvfile, delimiter=';',
+                                        quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                for row in r:
+                    spamwriter.writerow(row)

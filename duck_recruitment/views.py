@@ -65,13 +65,13 @@ class EcViewSet(viewsets.ModelViewSet):
 
 
 class EtapeViewSet(viewsets.ModelViewSet):
-    queryset = EtapeVet.objects.filter(cod_cmp='034')
+    # queryset = EtapeVet.objects.filter(cod_cmp='034')
     serializer_class = EtapeSerializer
 
     def get_queryset(self):
-        queryset = super(EtapeViewSet, self).get_queryset()
+        # queryset = super(EtapeViewSet, self).get_queryset()
         user = User.objects.get(username=self.request.user.username)
-        queryset = queryset.filter(cod_etp__cod_etp__in=user.settings_user.etapes.values_list('cod_etp', flat=True))
+        queryset = EtapeVet.objects.filter(cod_cmp='034', cod_etp__cod_etp__in=user.settings_user.etapes.values_list('cod_etp', flat=True))
         return queryset
 
 
