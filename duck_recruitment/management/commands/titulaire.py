@@ -68,11 +68,14 @@ class Command(BaseCommand):
             for x in InsAdmEtpInitial.inscrits.using('oracle').filter(cod_etp='L3NEDU'):
                 if str(x.cod_ind.cod_etu) in result.keys():
                     cod_etu = str(x.cod_ind.cod_etu)
-                    a = [result[cod_etu], '', x.cod_ind.lib_pr1_ind, x.cod_ind.lib_nom_pat_ind,
-                         '{}@foad.iedparis8.net'.format(cod_etu), 'L3NEDU']
+                    a = [result[cod_etu], 'not cached', x.cod_ind.lib_pr1_ind, x.cod_ind.lib_nom_pat_ind,
+                         '{}@foad.iedparis8.net'.format(cod_etu), 'cas', cod_etu, 'fr', 'L3NEDU', 1]
                     r.append(a)
             with open('cohorts.csv', 'wb') as csvfile:
                 spamwriter = csv.writer(csvfile, delimiter=';',
                                         quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                champs = ['username', 'password', 'firstname', 'lastname',
+                          'email', 'auth', 'idnumber', 'lang', 'cohort1', 'type1']
+                spamwriter.writerow(champs)
                 for row in r:
                     spamwriter.writerow(row)
