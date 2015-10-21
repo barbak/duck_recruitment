@@ -12,8 +12,14 @@ from duck_recruitment.filters import EcFilter, CcourIndividuFilter, EtatHeureFil
 from .models import CCOURS_Individu, Ec, Agent, EtapeVet, EtatHeure, AllEcAnnuel, Titulaire, \
     InvitationEc  # , BaseIndividu
 from .serializers import CCOURS_IndividuSerializer, AgentSerializer, EcSerializer, EtapeSerializer, EtatHeureSerializer, \
-    AllEcAnnuelSerializer, TitulaireSerializer, InvitationEcSerializer
+    AllEcAnnuelSerializer, TitulaireSerializer, InvitationEcSerializer, UserSerializer
 
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    def get_queryset(self):
+        return User.objects.filter(username=self.request.user.username)
 
 class DeclareAgentView(TemplateView):
     template_name = "duck_recruitment/declare_agent.html"
@@ -108,7 +114,6 @@ class ConfirmeInvitation(views.APIView):
         """
         Return a list of all users.
         """
-        print request.query_params
         usernames = [user.username for user in User.objects.all()]
         return Response(usernames)
 

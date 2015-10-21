@@ -29,7 +29,7 @@
 <!--            <td>{{ ec.type_ec }}</td> -->
             <td><div ng-repeat="agent in ec.agents " class="clearfix">
                     <div class="pull-left">{{ agent.info_perso}}</div>
-                    <div class="btn btn-xs btn-warning pull-right" ng-if="!agent.valider"
+                    <div class="btn btn-xs btn-warning pull-right" ng-if="!agent.valider||user.is_superuser"
                                                 ng-click="delete_agent(agent, ec)">Suprimer<span class="glyphicon glyphicon-remove"></span></div>
                     <div class="btn btn-xs btn-primary pull-right" ng-if="!agent.valider"
                             ng-click="valider_agent(agent)">Valider <span class="glyphicon glyphicon-ok"></span></div>
@@ -39,16 +39,16 @@
                 </div>
                 <div ng-repeat="invitation in ec.invitations|filter:filter_invit " class="clearfix">
                     {{ invitation.email }} {{ invitation.id }} {{ invitation.date_acceptation }}
-                    <div class="btn btn-xs btn-warning pull-right" ng-if="!invitation.valider"
+                    <div class="btn btn-xs btn-warning pull-right" ng-if="!invitation.valider||user.is_superuser"
                                                 ng-click="delete_invitation(invitation, ec)">Suprimer<span class="glyphicon glyphicon-remove"></span></div>
                     <div class="btn btn-xs btn-primary pull-right" ng-if="!invitation.valider"
                             ng-click="valider_invitation(invitation)">Valider <span class="glyphicon glyphicon-ok"></span></div>
                     <div class="label label-success pull-right" ng-if="invitation.valider">OK</div>
+                    <div class="btn btn-xs btn-danger pull-right" ng-if="user.is_superuser">Supprimer</div>
                 </div>
             </td>
             <td>
                 <button class="btn btn-primary" ng-click="searchPersonne(ec)"><span class="glyphicon glyphicon-plus-sign"></span> Ajouter une personne</button>
-                <!--<button class="btn btn-primary" ng-click="createInvitation(ec)"><span class="glyphicon glyphicon-plus-sign"></span> Inviter une personne inconue du système</button> -->
             </td>
         </tr>
     </table>

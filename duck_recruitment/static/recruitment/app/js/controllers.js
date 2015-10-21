@@ -85,7 +85,7 @@ myApp.controller('RecruitmentCtrl',
 
 
     $scope.delete_agent = function(agent, ec){
-        if (!agent.valider) {
+        if (!agent.valider || $scope.user.is_superuser) {
             var idx = ec.agents.indexOf(agent);
             i = EtatHeure.resource().get({EtatHeureId: agent.id}, function () {
                 i.$delete(function () {

@@ -1,5 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals
+from django.contrib.auth.models import User
 from django_apogee.models import Etape
 from rest_framework import serializers
 from .models import CCOURS_Individu, Agent, Ec, EtapeVet, AllEcAnnuel, EtatHeure, Titulaire, InvitationEc
@@ -108,6 +109,14 @@ class EtapeSerializer(serializers.ModelSerializer):
         fields = ('id', 'cod_etp', "cod_vrs_vet", "cod_cmp", "lib_etp")
         read_only_fields = ('lib_etp',)
 
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+    pour les user
+    """
+    class Meta:
+        model = User
+        fields = ('username', 'is_superuser', 'email', 'groups')
 
 class InvitationEcSerializer(serializers.ModelSerializer):
 

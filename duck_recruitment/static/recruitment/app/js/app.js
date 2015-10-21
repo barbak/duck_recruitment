@@ -17,3 +17,10 @@ myApp.config(['$routeProvider', '$httpProvider',
         $httpProvider.defaults.xsrfCookieName = 'csrftoken';
         $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     }]);
+myApp.run(['$rootScope', '$http', function($rootScope, $http){
+    $http.get('/recruitment/v1/users').success(function(data){
+       if(data.length == 1){
+           $rootScope.user = data[0];
+       }
+    });
+}]);

@@ -12,6 +12,8 @@ router.register(r'v1/etat_heure', views.EtatHeureViewSet, base_name='etat_heure'
 router.register(r'v1/all_ec_annuel', views.AllEcAnnuelViewSet, base_name='all_ec_annuel')
 router.register(r'v1/titulaires', views.TitulaireViewSet, base_name='titulaire')
 router.register(r'v1/invitations_ec', views.InvitationEcViewSet, base_name='invitaions_ec')
+router.register(r'v1/invitations_ec', views.InvitationEcViewSet, base_name='invitaions_ec')
+router.register(r'v1/users', views.UserViewSet, base_name='users')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
