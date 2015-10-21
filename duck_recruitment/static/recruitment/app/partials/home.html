@@ -28,7 +28,8 @@
             <td>{{ ec.lib_ec }}</td>
 <!--            <td>{{ ec.type_ec }}</td> -->
             <td><div ng-repeat="agent in ec.agents " class="clearfix">
-                    <div class="pull-left">{{ agent.info_perso}}</div>
+
+                    <div class="pull-left"><span class="badge">agent</span> {{ agent.info_perso}}</div>
                     <div class="btn btn-xs btn-warning pull-right" ng-if="!agent.valider||user.is_superuser"
                                                 ng-click="delete_agent(agent, ec)">Suprimer<span class="glyphicon glyphicon-remove"></span></div>
                     <div class="btn btn-xs btn-primary pull-right" ng-if="!agent.valider"
@@ -38,13 +39,13 @@
                     <hr>
                 </div>
                 <div ng-repeat="invitation in ec.invitations|filter:filter_invit " class="clearfix">
-                    {{ invitation.email }} {{ invitation.id }} {{ invitation.date_acceptation }}
+                    <div class="pull-left"><span class="badge">invitation</span>{{ invitation.email }}  {{ invitation.date_acceptation }}</div>
                     <div class="btn btn-xs btn-warning pull-right" ng-if="!invitation.valider||user.is_superuser"
                                                 ng-click="delete_invitation(invitation, ec)">Suprimer<span class="glyphicon glyphicon-remove"></span></div>
                     <div class="btn btn-xs btn-primary pull-right" ng-if="!invitation.valider"
                             ng-click="valider_invitation(invitation)">Valider <span class="glyphicon glyphicon-ok"></span></div>
                     <div class="label label-success pull-right" ng-if="invitation.valider">OK</div>
-                    <div class="btn btn-xs btn-danger pull-right" ng-if="user.is_superuser">Supprimer</div>
+
                 </div>
             </td>
             <td>
