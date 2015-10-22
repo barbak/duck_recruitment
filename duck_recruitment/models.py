@@ -174,7 +174,7 @@ class EtatHeure(models.Model):
         recipients = [self.all_ec_annuel.agent.email if not settings.DEBUG else 'paul.guichon@gmail.com']
         context = {
             'agent': self.all_ec_annuel.agent,
-            'ec': self
+            'ec': self.ec
         }
         if self.all_ec_annuel.agent.type == 'tit':
             template = Mail.objects.get(name='invitation_titulaire')
