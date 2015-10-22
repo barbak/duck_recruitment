@@ -80,7 +80,7 @@ myApp.controller('RecruitmentCtrl',
     };
 
     $scope.delete_invitation = function(invitation, ec){
-        if (!invitation.valider) {
+        if (!invitation.valider || $scope.user.is_superuser) {
             var idx = ec.invitations.indexOf(invitation);
             i = Invitation.resource().get({InvitationEcId: invitation.id}, function () {
                 i.$delete(function () {
