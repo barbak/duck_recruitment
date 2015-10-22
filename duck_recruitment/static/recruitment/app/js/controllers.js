@@ -1,7 +1,7 @@
 
 myApp.controller('RecruitmentCtrl',
-    ['$scope', '$modal', '$http', '$log', 'Etape', 'Ec', 'PersonneDsi', 'EtatHeure', 'Invitation',
-    function ($scope, $modal, $http, $log, Etape, Ec, PersonneDsi, EtatHeure, Invitation) {
+    ['$scope', '$modal', '$http', '$log', 'Etape', 'Ec', 'PersonneDsi', 'EtatHeure', 'Invitation', '$filter',
+    function ($scope, $modal, $http, $log, Etape, Ec, PersonneDsi, EtatHeure, Invitation, $filter) {
     $scope.agents = [];
     $scope.monEtape = null;
 
@@ -22,6 +22,7 @@ myApp.controller('RecruitmentCtrl',
     $scope.listEc = function(etape){
         Ec.ec_by_etape(etape).success(function(data){
             $scope.ecs = data.results;
+
             ecs = $scope.ecs;
             for (var i = 0, length=ecs.length; i<length; i++){
                getAgent(ecs[i]);
@@ -32,9 +33,12 @@ myApp.controller('RecruitmentCtrl',
         });
     };
     $scope.etapes = Etape.query(function(data){
-        console.log(data);
+        $scope.etapes =$filter('filter')($scope.etapes, {cod_vrs_vet:'5'}, false);
+        if($scope.etapes.length >= 1){
+
         $scope.monEtape = $scope.etapes[0];
          $scope.listEc({id: $scope.etapes[0].id });
+            }
     });
     $scope.$on('addPersonneDone', function(event, ec){
         getAgent(ec);

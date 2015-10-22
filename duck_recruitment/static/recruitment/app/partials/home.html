@@ -26,7 +26,6 @@
         <tr ng-repeat="ec in ecs | filter:search">
             <td>{{ ec.code_ec }}</td>
             <td>{{ ec.lib_ec }}</td>
-<!--            <td>{{ ec.type_ec }}</td> -->
             <td><div ng-repeat="agent in ec.agents " class="clearfix">
 
                     <div class="pull-left"><span class="badge">agent</span> {{ agent.info_perso}}</div>
