@@ -24,58 +24,108 @@ class Command(BaseCommand):
                     default=None,
                     help='annee de remontee'),
     )
-    # ?wstoken=ebc4db80360f1f373aa886ee1f270956&wsfunction=core_user_get_users_by_field&username=hhamaoui&moodlewsrestformat=json
+    'npeteinatos;not cached;nikos;peitenatos;nikos.peteinatos@iedparis8.net;cas;14511794;fr;L1NPSY;1'
     def handle(self, *args, **options):
-        # url = 'http://moodle.iedparis8.net/webservice/rest/server.php'
-        # param = {
-        #     'wstoken': 'ebc4db80360f1f373aa886ee1f270956',
-        #     'wsfunction': 'core_user_get_users_by_field',
-        #     'field': 'hhamaoui',
-        #     'moodlewsrestformat': 'json'
-        # }
-        # print requests.get(url, params=param).text
-        if False:
-            filtre = '(&(uid=*)(mail=*etud*)(up8Diplome=L3NEDU))'
-            attr = [
-                'sn',
-                'givenName',
-                'supannEtuId',
-                'uid'
-            ]
-            search = {'base_dn': 'dc=univ-paris8,dc=fr', 'list': 'sn,givenName,supannEtuId'}
-            conn = simpleldap.Connection('ldap.etud.univ-paris8.fr',
-                                         dn='cn=admin,dc=univ-paris8,dc=fr',
-                                         search_defaults=search,
-                                         password='p8SARiH3')
-            results = conn.search(filtre,
-                                  # attrs=attr
-                                  )
-            # print len(results)
-            r = {}
-            with open('eggs.csv', 'wb') as csvfile:
-                spamwriter = csv.writer(csvfile, delimiter=' ',
-                                        quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        url = 'http://moodle.iedparis8.net/webservice/rest/server.php'
+        wsfunction = 'core_user_create_users'
+        param = {
+            'wstoken': '91361080b67ff676c3d7789e9e967ca2',
+            'wsfunction': wsfunction,
+            'moodlewsrestformat': 'json',
+            'users[0][username]': 'npeteinatos',
+            'users[0][password]': 'not cached',
+            'users[0][firstname]': 'nikos',
+            'users[0][lastname]': 'peitenatos',
+            'users[0][email]': 'nikos.peteinatos@iedparis8.net',
+            'users[0][auth]': 'cas',
+            'users[0][idnumber]': '14511794',
+            'users[0][lang]': 'fr',
+            # '': '',
 
-                for x in results:
-                    spamwriter.writerow([x['supannEtuId'][0], x['uid'][0]])
-        else:
-            result = {}
-            with open('eggs.csv', 'rb') as csvfile:
-                spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
-                for row in spamreader:
-                    result[row[0]] = row[1]
-            r = []
-            for x in InsAdmEtpInitial.inscrits.using('oracle').filter(cod_etp='L3NEDU'):
-                if str(x.cod_ind.cod_etu) in result.keys():
-                    cod_etu = str(x.cod_ind.cod_etu)
-                    a = [result[cod_etu], 'not cached', x.cod_ind.lib_pr1_ind, x.cod_ind.lib_nom_pat_ind,
-                         '{}@foad.iedparis8.net'.format(cod_etu), 'cas', cod_etu, 'fr', 'L3NEDU', 1]
-                    r.append(a)
-            with open('cohorts.csv', 'wb') as csvfile:
-                spamwriter = csv.writer(csvfile, delimiter=';',
-                                        quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                champs = ['username', 'password', 'firstname', 'lastname',
-                          'email', 'auth', 'idnumber', 'lang', 'cohort1', 'type1']
-                spamwriter.writerow(champs)
-                for row in r:
-                    spamwriter.writerow(row)
+        }
+        p = {
+            'wstoken': '91361080b67ff676c3d7789e9e967ca2',
+            'wsfunction': 'core_user_get_users_by_field',
+            'moodlewsrestformat': 'json',
+            'field': 'username',
+            'values[0]': 'npeteinatos'
+        }
+        result = requests.post(url, data=p).json()[0]
+
+        param['wsfunction'] = 'core_user_update_users'
+        print result['id']
+        param['users[0][id]'] = result['id']
+        param.pop('users[0][password]')
+
+        print param
+        result = requests.post(url, data=param).json()
+
+        print result
+        param = {
+                'wstoken': '91361080b67ff676c3d7789e9e967ca2',
+                'wsfunction': 'core_cohort_add_cohort_members',
+                'moodlewsrestformat': 'json',
+                'members[0][cohorttype][type]': 'idnumber',
+                'members[0][cohorttype][value]':  'L3NEDU',
+                'members[0][usertype][type]': 'username',
+                'members[0][usertype][value]': 'npeteinatos',
+            }
+        result = requests.post(url, data=param).json()
+        print result
+
+        param = {
+                'wstoken': '91361080b67ff676c3d7789e9e967ca2',
+                'wsfunction': 'core_cohort_add_cohort_members',
+                'moodlewsrestformat': 'json',
+                'members[0][cohorttype][type]': 'idnumber',
+                'members[0][cohorttype][value]':  'L3NEDU',
+                'members[0][usertype][type]': 'username',
+                'members[0][usertype][value]': 'npeteinatos',
+            }
+        result = requests.post(url, data=param).json()
+        print result
+        # if False:
+        #     filtre = '(&(uid=*)(mail=*etud*)(up8Diplome=L3NEDU))'
+        #     attr = [
+        #         'sn',
+        #         'givenName',
+        #         'supannEtuId',
+        #         'uid'
+        #     ]
+        #     search = {'base_dn': 'dc=univ-paris8,dc=fr', 'list': 'sn,givenName,supannEtuId'}
+        #     conn = simpleldap.Connection('ldap.etud.univ-paris8.fr',
+        #                                  dn='cn=admin,dc=univ-paris8,dc=fr',
+        #                                  search_defaults=search,
+        #                                  password='p8SARiH3')
+        #     results = conn.search(filtre,
+        #                           # attrs=attr
+        #                           )
+        #     # print len(results)
+        #     r = {}
+        #     with open('eggs.csv', 'wb') as csvfile:
+        #         spamwriter = csv.writer(csvfile, delimiter=' ',
+        #                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        #
+        #         for x in results:
+        #             spamwriter.writerow([x['supannEtuId'][0], x['uid'][0]])
+        # else:
+        #     result = {}
+        #     with open('eggs.csv', 'rb') as csvfile:
+        #         spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+        #         for row in spamreader:
+        #             result[row[0]] = row[1]
+        #     r = []
+        #     for x in InsAdmEtpInitial.inscrits.using('oracle').filter(cod_etp='L3NEDU'):
+        #         if str(x.cod_ind.cod_etu) in result.keys():
+        #             cod_etu = str(x.cod_ind.cod_etu)
+        #             a = [result[cod_etu], 'not cached', x.cod_ind.lib_pr1_ind, x.cod_ind.lib_nom_pat_ind,
+        #                  '{}@foad.iedparis8.net'.format(cod_etu), 'cas', cod_etu, 'fr', 'L3NEDU', 1]
+        #             r.append(a)
+        #     with open('cohorts.csv', 'wb') as csvfile:
+        #         spamwriter = csv.writer(csvfile, delimiter=';',
+        #                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        #         champs = ['username', 'password', 'firstname', 'lastname',
+        #                   'email', 'auth', 'idnumber', 'lang', 'cohort1', 'type1']
+        #         spamwriter.writerow(champs)
+        #         for row in r:
+        #             spamwriter.writerow(row)
