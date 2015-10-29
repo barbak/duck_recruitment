@@ -23,8 +23,21 @@ class Command(BaseCommand):
                     default=None,
                     help='annee de remontee'),
     )
-    'npeteinatos;not cached;nikos;peitenatos;nikos.peteinatos@iedparis8.net;cas;14511794;fr;L1NPSY;1'
-
+    ETAPES = [
+        # 'L1NPSY',
+        # 'L2NPSY',
+        # 'L3NPSY',
+        # 'L1NINF',
+        # 'L2NINF',
+        # 'L3NINF',
+        # 'DSNATA',
+        'M1NPCL',
+        'M2NPCL',
+        'M1NPEA',
+        'M2NPEA',
+        'M1NPST',
+        'M2NPST',
+    ]
     def get_ldap_student(self, cod_etp):
         filtre = '(&(uid=*)(mail=*etud*)(up8Diplome={}))'.format(cod_etp)
         attr = [
@@ -60,6 +73,7 @@ class Command(BaseCommand):
                 }
                 resultats.append(user)
         return resultats
+
     def get_all_user_csv(self, users, cod_etp):
         result = [[user['username'], 'not cached', user['firstname'],
                   user['lastname'], '{}@foad.iedparis8.net'.format(user['cod_etu']),
@@ -161,9 +175,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         cod_etp = 'M1NEFI'
-        users = self.get_all_user(cod_etp)
-        # self.create_users(users)
-        self.create_csv(self.get_all_user_csv(users, cod_etp), cod_etp)
+        all_user = []
+        for cod_etp in self.ETAPES:
+            users = self.get_all_user(cod_etp)
+            all_user.extend(self.get_all_user_csv(users, cod_etp))
+        self.create_csv(all_user, '')
 
 
 
