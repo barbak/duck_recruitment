@@ -161,6 +161,9 @@ class AllEcAnnuel(models.Model):
     annee = models.CharField(max_length=4, default='2015')
     date_creation = models.DateField(auto_now_add=True)
 
+    def all_ec_lib(self):
+        return ['{} {}'.format(ec.ec.code_ec, ec.ec.lib_ec.encode("ascii", "ignore")) for ec in self.etatheure_set.all()]
+
 
 class EtatHeure(models.Model):
     all_ec_annuel = models.ForeignKey(AllEcAnnuel)
