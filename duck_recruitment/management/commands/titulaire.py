@@ -24,20 +24,22 @@ class Command(BaseCommand):
                     help='annee de remontee'),
     )
     ETAPES = [
-        # 'L1NPSY',
-        # 'L2NPSY',
-        # 'L3NPSY',
-        # 'L1NINF',
-        # 'L2NINF',
-        # 'L3NINF',
-        # 'DSNATA',
+        'L1NPSY',
+        'L2NPSY',
+        'L3NPSY',
+        'L1NINF',
+        'L2NINF',
+        'L3NINF',
+        'DSNATA',
         'M1NPCL',
         'M2NPCL',
         'M1NPEA',
         'M2NPEA',
         'M1NPST',
         'M2NPST',
+        'M1NEFI'
     ]
+
     def get_ldap_student(self, cod_etp):
         filtre = '(&(uid=*)(mail=*etud*)(up8Diplome={}))'.format(cod_etp)
         attr = [
