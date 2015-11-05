@@ -28,11 +28,15 @@
             <td>{{ ec.lib_ec }}</td>
             <td><div ng-repeat="agent in ec.agents " class="clearfix">
 
-                    <div class="pull-left"><span class="badge">agent</span> {{ agent.info_perso}}</div>
+                    <div class="pull-left">
+                        <span class="badge">agent</span> {{ agent.agent_identity}} (<a href="mailto:{{ agent.agent_email }}">{{ agent.agent_email }})</a>
+                    </div>
                     <div class="btn btn-xs btn-warning pull-right" ng-if="!agent.valider||user.is_superuser"
-                                                ng-click="delete_agent(agent, ec)">Suprimer<span class="glyphicon glyphicon-remove"></span></div>
+                         ng-click="delete_agent(agent, ec)">Suprimer<span class="glyphicon glyphicon-remove"></span>
+                    </div>
                     <div class="btn btn-xs btn-primary pull-right" ng-if="!agent.valider"
-                            ng-click="valider_agent(agent)">Valider <span class="glyphicon glyphicon-ok"></span></div>
+                         ng-click="valider_agent(agent)">Valider <span class="glyphicon glyphicon-ok"></span>
+                    </div>
 
                     <div class="label label-success pull-right" ng-if="agent.valider">OK</div>
                     <hr>
