@@ -24,20 +24,32 @@ class Command(BaseCommand):
                     help='annee de remontee'),
     )
     ETAPES = [
+        'L1NDRO',
+        'L2NDRO',
+        'L3NDRO',
+        # droit
         'L1NPSY',
         'L2NPSY',
         'L3NPSY',
+        # licence psy
         'L1NINF',
         'L2NINF',
         'L3NINF',
+        # licence info
         'DSNATA',
+        # desu
         'M1NPCL',
         'M2NPCL',
+        # clinique
         'M1NPEA',
         'M2NPEA',
+        # enfance
         'M1NPST',
         'M2NPST',
+        # social
+        'L3NEDU',
         'M1NEFI'
+        # education
     ]
 
     def get_ldap_student(self, cod_etp):
@@ -176,7 +188,6 @@ class Command(BaseCommand):
                 spamwriter.writerow(row)
 
     def handle(self, *args, **options):
-        cod_etp = 'M1NEFI'
         all_user = []
         for cod_etp in self.ETAPES:
             users = self.get_all_user(cod_etp)
