@@ -34,9 +34,18 @@ class AllEcAnnuelSerializer(serializers.ModelSerializer):
 
 class EtatHeureSerializer(serializers.ModelSerializer):
     info_perso = serializers.SerializerMethodField()
+    agent_identity = serializers.SerializerMethodField()
+    agent_email = serializers.SerializerMethodField()
 
     def get_info_perso(self, obj):
         return '{} {} {}'.format(obj.all_ec_annuel.agent.last_name, obj.all_ec_annuel.agent.first_name, obj.all_ec_annuel.agent.email.lower())
+
+    def get_agent_identity(self, obj):
+        return '{} {}'.format(obj.all_ec_annuel.agent.last_name,
+                              obj.all_ec_annuel.agent.first_name)
+
+    def get_agent_email(self, obj):
+        return obj.all_ec_annuel.agent.email.lower()
 
     def create(self, validated_data):
         e = EtatHeure.objects.get_or_create(ec=validated_data['ec'], all_ec_annuel=validated_data['all_ec_annuel'])[0]
