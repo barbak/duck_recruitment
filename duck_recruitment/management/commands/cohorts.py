@@ -36,7 +36,7 @@ class Command(BaseCommand):
         'L2NINF',
         'L3NINF',
         # licence info
-        'DSNATA',
+        'DSNPCA',
         # desu
         'M1NPCL',
         'M2NPCL',
