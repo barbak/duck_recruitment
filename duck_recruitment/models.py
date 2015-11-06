@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 from __future__ import unicode_literals
-from django.db import models
+from django.db import models, IntegrityError
 from django.utils.encoding import python_2_unicode_compatible
 from django_apogee.models import Etape
 from duck_recruitment.managers import EcManager
@@ -73,12 +73,17 @@ class Agent(models.Model):
     birthday = models.DateField('date de naissance', null=True)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        force_insert = False
         self.id = self.individu_id
         if self.type == 'charge':
             self._copy_dsi()
         else:
             self._copy_tit()
-        super(Agent, self).save(force_insert, force_update, using, update_fields)
+        try:
+            super(Agent, self).save(force_insert, force_update, using, update_fields)
+        except IntegrityError:
+            super(Agent, self).save(force_insert, True, using, update_fields)
+
 
     def _copy_tit(self):
         ind = Titulaire.objects.get(numero=self.individu_id)
@@ -89,6 +94,11 @@ class Agent(models.Model):
         self._copy_ind(ind)
 
     def _copy_ind(self, ind):
+        try:
+            a = Agent.objects.get(personal_email=ind.mail)
+            self.pk = a.id
+        except Agent.DoesNotExist:
+            pass
         self.last_name = ind.nom_pat
         self.common_name = ind.nom_usuel
         self.first_name1 = ind.prenom

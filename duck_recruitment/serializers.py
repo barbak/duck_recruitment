@@ -94,7 +94,6 @@ class AgentSerializer(serializers.ModelSerializer):
         if 'get_heure' in validated_data.keys():
             arg['nombre_heure_estime'] = validated_data['get_heure']
             del validated_data['get_heure']
-
         agent = Agent.objects.get_or_create(**validated_data)[0]
         if annee:
             arg['all_ec_annuel'] = AllEcAnnuel.objects.get_or_create(agent=agent, annee=annee)[0]
