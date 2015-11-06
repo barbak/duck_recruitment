@@ -66,9 +66,9 @@ class Agent(models.Model):
     GENDER_CHOICES = (
         ('M', 'Homme'), ('F', 'Femme')
     )
-    last_name = models.CharField(u"Nom patronymique", max_length=30, null=True)
-    common_name = models.CharField(u"Nom d'époux", max_length=30, null=True, blank=True)
-    first_name1 = models.CharField(u"Prénom", max_length=30, null=True)
+    last_name = models.CharField(u"Nom patronymique", max_length=100, null=True)
+    common_name = models.CharField(u"Nom d'époux", max_length=100, null=True, blank=True)
+    first_name1 = models.CharField(u"Prénom", max_length=100, null=True)
     personal_email = models.EmailField("Email", unique=True, null=True)
     birthday = models.DateField('date de naissance', null=True)
 
