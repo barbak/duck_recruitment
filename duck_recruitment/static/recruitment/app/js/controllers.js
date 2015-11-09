@@ -7,24 +7,26 @@ myApp.controller('RecruitmentCtrl',
 
 
     var getAgent = function(ec){
-        EtatHeure.search(ec.code_ec).success(function(data){
-            ec.agents = data;
-        });
+        //EtatHeure.search(ec.code_ec).success(function(data){
+        //    ec.agents = data;
+        //});
+        ec.agents = ec.etat_heure;
     };
     $scope.filter_invit=function(invitation){
             return invitation.date_acceptation==null;
     };
     var getInvitation = function(ec){
-        Invitation.search(ec.code_ec).success(function(data){
-            ec.invitations = data;
-        });
+        //Invitation.search(ec.code_ec).success(function(data){
+        //    ec.invitations = data;
+        //});
+        ec.invitations = ec.invitation;
     };
     $scope.listEc = function(etape){
         Ec.ec_by_etape(etape).success(function(data){
             $scope.ecs = data.results;
 
             ecs = $scope.ecs;
-            for (var i = 0, length=ecs.length; i<length; i++){
+            for (var i = 0, length=ecs.length; i<length; i++) {
                getAgent(ecs[i]);
                getInvitation(ecs[i]);
             }
@@ -98,8 +100,28 @@ myApp.controller('RecruitmentCtrl',
             });
         }
     };
+
+    $scope.modify_agent = function(etat_heure){
+
+        var modalInstance = $modal.open({
+            templateUrl: '/static/recruitment/app/partials/modifyPersonne.html',
+            controller: 'ModifyCtrl',
+            resolve: {
+                etat_heure: function() { return etat_heure }
+            }
+        });
+    };
 }]);
 
+myApp.controller('ModifyCtrl',
+    ['$scope', '$log', 'etat_heure', 'EtatHeure',
+    function ($scope, $log, etat_heure, EtatHeure) {
+            // $log.log(etat_heure);
+            $scope.etat_heure = etat_heure;
+            $scope.save = function (etat_heure) {
+            EtatHeure.resource().save(etat_heure);
+        }
+    }]);
 
 myApp.controller('SearchCtrl',
     ['$rootScope', '$scope', '$modalInstance', 'ec', '$modal', '$http', '$log', 'PersonneDsi', 'Agent', 'EtatHeure',
@@ -113,7 +135,8 @@ myApp.controller('SearchCtrl',
         $scope.addPersonne = function(personne, ec){
             Agent.resource().save({individu_id:personne.numero, type: personne.type, annee:'2015', code_ec:ec.code_ec,
                 forfaitaire: $scope.forfaitaire, heure: $scope.nb_heure}).$promise.then(function(){
-                $scope.message = 'Opération réussi';
+                $scope.message = {message: 'Opération réussi', type: 'success'};
+                $scope.errors = null;
                 $scope.pers = null;
             }, function(){
                $scope.errors = {Erreur: 'Il y a eu une erreur'};

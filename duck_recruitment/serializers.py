@@ -50,9 +50,12 @@ class EtatHeureSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         e = EtatHeure.objects.get_or_create(ec=validated_data['ec'], all_ec_annuel=validated_data['all_ec_annuel'])[0]
         valider = validated_data.get('valider', None)
-        if valider:
+        for k,v in validated_data.iteritems():
+            setattr(e, k, v)
+
+        if valider is not None:
             e.valider = valider
-            e.save()
+        e.save()
         return e
 
     class Meta:
@@ -107,9 +110,19 @@ class AgentSerializer(serializers.ModelSerializer):
 
 
 class EcSerializer(serializers.ModelSerializer):
+    etat_heure = serializers.SerializerMethodField()
+    invitation = serializers.SerializerMethodField()
+
     class Meta:
         model = Ec
 
+    def get_etat_heure(self, obj):
+        return EtatHeureSerializer(EtatHeure.objects.filter(ec=obj.pk),
+                                   many=True).data
+
+    def get_invitation(self, obj):
+        return InvitationEcSerializer(InvitationEc.objects.filter(ec=obj.pk),
+                                      many=True).data
 
 class EtapeSerializer(serializers.ModelSerializer):
     class Meta:

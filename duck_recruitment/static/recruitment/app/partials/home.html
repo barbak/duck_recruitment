@@ -1,4 +1,3 @@
-
 <div class="well">
     <div class="panel panel-primary">
         <div class="panel-heading">
@@ -8,7 +7,10 @@
             <form action="">
             <div class="form-group">
                <div class="col-sm-5">
-                    <select class="form-control" ng-options="etape.lib_etp + ' ' + etape.cod_vrs_vet for etape in etapes" ng-model="monEtape" ng-change="listEc(monEtape)">
+                    <select class="form-control"
+                            ng-options="etape.lib_etp + ' ' + etape.cod_vrs_vet for etape in etapes"
+                            ng-model="monEtape"
+                            ng-change="listEc(monEtape)">
                     </select>
                </div>
                 <label for="inputEmail3" class="col-sm-2 control-label">Filtrer les EC (code ou intitullé)</label>
@@ -26,14 +28,24 @@
         <tr ng-repeat="ec in ecs | filter:search">
             <td>{{ ec.code_ec }}</td>
             <td>{{ ec.lib_ec }}</td>
-            <td><div ng-repeat="agent in ec.agents " class="clearfix">
+            <td>
+                <div ng-repeat="agent in ec.agents " class="clearfix">
 
                     <div class="pull-left">
-                        <span class="badge">agent</span> {{ agent.agent_identity}} (<a href="mailto:{{ agent.agent_email }}">{{ agent.agent_email }})</a>
+                        <span class="badge">agent</span>
+                        <div class="btn btn-xs btn-primary"
+                             ng-click="modify_agent(agent)">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                            {{ agent.agent_identity }}
+                        </div>
+                        <a href="mailto:{{ agent.agent_email }}">{{ agent.agent_email }}</a>
                     </div>
-                    <div class="btn btn-xs btn-warning pull-right" ng-if="!agent.valider||user.is_superuser"
+
+                    <div class="btn btn-xs btn-warning pull-right"
+                         ng-if="!agent.valider||user.is_superuser"
                          ng-click="delete_agent(agent, ec)">Suprimer<span class="glyphicon glyphicon-remove"></span>
                     </div>
+
                     <div class="btn btn-xs btn-primary pull-right" ng-if="!agent.valider"
                          ng-click="valider_agent(agent)">Valider <span class="glyphicon glyphicon-ok"></span>
                     </div>
