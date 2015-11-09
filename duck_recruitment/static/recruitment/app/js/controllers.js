@@ -7,19 +7,19 @@ myApp.controller('RecruitmentCtrl',
 
 
     var getAgent = function(ec){
-        //EtatHeure.search(ec.code_ec).success(function(data){
-        //    ec.agents = data;
-        //});
-        ec.agents = ec.etat_heure;
+        EtatHeure.search(ec.code_ec).success(function(data){
+            ec.agents = data;
+        });
+        //ec.agents = ec.etat_heure;
     };
     $scope.filter_invit=function(invitation){
             return invitation.date_acceptation==null;
     };
     var getInvitation = function(ec){
-        //Invitation.search(ec.code_ec).success(function(data){
-        //    ec.invitations = data;
-        //});
-        ec.invitations = ec.invitation;
+        Invitation.search(ec.code_ec).success(function(data){
+            ec.invitations = data;
+        });
+        //ec.invitations = ec.invitation;
     };
     $scope.listEc = function(etape){
         Ec.ec_by_etape(etape).success(function(data){
