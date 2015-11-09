@@ -7,20 +7,26 @@ myApp.controller('RecruitmentCtrl',
 
 
     var getAgent = function(ec){
+
+        ec.agents = ec.etat_heure;
+    };
+    var updateAgents = function(ec){
         EtatHeure.search(ec.code_ec).success(function(data){
             ec.agents = data;
         });
-        //ec.agents = ec.etat_heure;
     };
     $scope.filter_invit=function(invitation){
             return invitation.date_acceptation==null;
     };
     var getInvitation = function(ec){
+
+        ec.invitations = ec.invitation;
+
+    };
+    var updateInvitations = function(ec){
         Invitation.search(ec.code_ec).success(function(data){
             ec.invitations = data;
         });
-        //ec.invitations = ec.invitation;
-
     };
     $scope.listEc = function(etape){
         Ec.ec_by_etape(etape).success(function(data){
@@ -44,12 +50,12 @@ myApp.controller('RecruitmentCtrl',
             }
     });
     $scope.$on('addPersonneDone', function(event, ec){
-        getAgent(ec);
+        updateAgents(ec);
 
     });
     $scope.$on('addInvitationDone', function(event, ec){
-        getAgent(ec);
-        getInvitation(ec);
+        updateAgents(ec);
+        updateInvitations(ec);
     });
     $scope.$on('createInvidation', function(event, ec){
 
