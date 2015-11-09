@@ -20,6 +20,7 @@ myApp.controller('RecruitmentCtrl',
             ec.invitations = data;
         });
         //ec.invitations = ec.invitation;
+
     };
     $scope.listEc = function(etape){
         Ec.ec_by_etape(etape).success(function(data){
