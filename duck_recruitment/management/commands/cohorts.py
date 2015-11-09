@@ -15,14 +15,7 @@ class Command(BaseCommand):
 
     url = 'http://moodle.iedparis8.net/webservice/rest/server.php'
     token = '91361080b67ff676c3d7789e9e967ca2'
-    option_list = BaseCommand.option_list + (
-        make_option('--annee',
-                    action='store',
-                    type="int",
-                    dest='annee',
-                    default=None,
-                    help='annee de remontee'),
-    )
+
     ETAPES = [
         'L1NDRO',
         'L2NDRO',
@@ -52,6 +45,9 @@ class Command(BaseCommand):
         # education
     ]
 
+    def add_arguments(self, parser):
+        parser.add_argument('username', nargs='?')
+
     def get_ldap_student(self, cod_etp):
         filtre = '(&(uid=*)(mail=*etud*)(up8Diplome={}))'.format(cod_etp)
         attr = [
@@ -76,7 +72,7 @@ class Command(BaseCommand):
         ldap_user = self.get_ldap_student(cod_etp)
         codes_etu = ldap_user.keys()
         for individu in Individu.objects.using('oracle').filter(etapes__cod_etp=cod_etp, etapes__cod_anu=ANNEE,
-                                                                etapes__eta_iae='E', etapes__tem_iae_prm='O'):
+                                                                etapes__eta_iae='E'):
             if str(individu.cod_etu) in codes_etu:
                 cod_etu = str(individu.cod_etu)
                 user = {
@@ -156,7 +152,6 @@ class Command(BaseCommand):
         }
         result = requests.post(self.url, data=param).json()
         return result
-
     def add_cohorts(self, user, cod_etp):
         param = {
                 'wstoken': self.token,
@@ -186,15 +181,31 @@ class Command(BaseCommand):
             spamwriter.writerow(champs)
             for row in users:
                 spamwriter.writerow(row)
+    def create_user_administratif(self, username):
+        with open('/vagrant/cohorts_admistratif.csv', 'wb') as csvfile:
+            spamwriter = csv.writer(csvfile, delimiter=';',
+                                    quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            champs = ['username', 'cohort1', 'type1']
+            spamwriter.writerow(champs)
+            for row in self.ETAPES:
+                spamwriter.writerow([username, row, '3'])
 
     def handle(self, *args, **options):
-        all_user = []
+        # if options['username']:
+        #     self.create_user_administratif(options['username'])
+        # else:
+        #     all_user = []
+        #     for cod_etp in self.ETAPES:
+        #         users = self.get_all_user(cod_etp)
+        #         all_user.extend(self.get_all_user_csv(users, cod_etp))
+        #     self.create_csv(all_user, '')
         for cod_etp in self.ETAPES:
             users = self.get_all_user(cod_etp)
-            all_user.extend(self.get_all_user_csv(users, cod_etp))
-        self.create_csv(all_user, '')
-
-
+            for user in users:
+                print self.create_user(user)
+                print self
+                print self.update_user(user)
+            break
 
         #     result = {}
         #     with open('eggs.csv', 'rb') as csvfile:

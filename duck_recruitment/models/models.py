@@ -7,6 +7,8 @@ from duck_recruitment.managers import EcManager
 from django.conf import settings
 from mailrobot.models import Mail
 
+
+@python_2_unicode_compatible
 class CCOURS_Individu(models.Model):
     id = models.IntegerField(db_column='INDIV_ID', primary_key=True)
     numero = models.IntegerField(db_column='INDIV_NUMERO')
@@ -28,7 +30,7 @@ class CCOURS_Individu(models.Model):
     mangue_id = models.IntegerField(db_column='MANGUE_ID')
     etat_id = models.IntegerField(db_column='ETAT_ID')
 
-    def __unicode__(self):
+    def __str__(self):
         return "{} {}" .format(self.nom_pat, self.prenom)
 
     class Meta:
@@ -58,6 +60,7 @@ class Titulaire(models.Model):
         ordering = ['nom_pat']
 
 
+@python_2_unicode_compatible
 class Agent(models.Model):
 
     individu_id = models.IntegerField(null=True)
@@ -72,6 +75,9 @@ class Agent(models.Model):
     personal_email = models.EmailField("Email", unique=True, null=True)
     birthday = models.DateField('date de naissance', null=True)
 
+    def __str__(self):
+        return "{} {}".format(self.last_name, self.first_name1)
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         force_insert = False
         self.id = self.individu_id
@@ -83,7 +89,6 @@ class Agent(models.Model):
             super(Agent, self).save(force_insert, force_update, using, update_fields)
         except IntegrityError:
             super(Agent, self).save(force_insert, True, using, update_fields)
-
 
     def _copy_tit(self):
         ind = Titulaire.objects.get(numero=self.individu_id)
@@ -104,8 +109,6 @@ class Agent(models.Model):
         self.first_name1 = ind.prenom
         self.personal_email = ind.mail
         self.birthday = ind.dnaissance
-
-
 
     @property
     def family_name(self):
@@ -147,6 +150,7 @@ class Agent(models.Model):
         return self.personal_email
 
 
+@python_2_unicode_compatible
 class EtapeVet(models.Model):
     cod_etp = models.ForeignKey(Etape)
     cod_vrs_vet = models.CharField(max_length=3)
@@ -155,7 +159,11 @@ class EtapeVet(models.Model):
     def lib_etp(self):
         return self.cod_etp.lib_etp
 
+    def __str__(self):
+        return "{} {}".format(self.cod_etp.cod_etp, self.cod_vrs_vet)
 
+
+@python_2_unicode_compatible
 class Ec(models.Model):
     id = models.CharField('id element', max_length=8, primary_key=True)
     etape = models.ManyToManyField(EtapeVet)
@@ -165,16 +173,25 @@ class Ec(models.Model):
     tem_sec = models.CharField('tem_sec', max_length=1)
     objects = EcManager()
 
+    def __str__(self):
+        return "{} {}".format(self.code_ec, self.lib_ec)
 
+
+@python_2_unicode_compatible
 class AllEcAnnuel(models.Model):
     agent = models.ForeignKey(Agent)
     annee = models.CharField(max_length=4, default='2015')
     date_creation = models.DateField(auto_now_add=True)
 
     def all_ec_lib(self):
-        return ['{} {}'.format(ec.ec.code_ec, ec.ec.lib_ec.encode("ascii", "ignore")) for ec in self.etatheure_set.all()]
+        return ['{} {}'.format(ec.ec.code_ec, ec.ec.lib_ec.encode("ascii", "ignore"))
+                for ec in self.etatheure_set.all()]
+
+    def __str__(self):
+        return "{} {}".format(self.agent, self.annee)
 
 
+@python_2_unicode_compatible
 class EtatHeure(models.Model):
     all_ec_annuel = models.ForeignKey(AllEcAnnuel)
     ec = models.ForeignKey(Ec)
@@ -204,7 +221,11 @@ class EtatHeure(models.Model):
                 self.envoi_mail_information()
         super(EtatHeure, self).save(force_insert, force_update, using, update_fields)
 
+    def __str__(self):
+        return "{}".format(self.id)
 
+
+@python_2_unicode_compatible
 class InvitationEc(models.Model):
     annee = models.CharField(max_length=4, default='2015')
     ec = models.ForeignKey(Ec)
@@ -234,34 +255,50 @@ class InvitationEc(models.Model):
                 self.envoi_mail_information()
         super(InvitationEc, self).save(force_insert, force_update, using, update_fields)
 
+    def __str__(self):
+        return "{} {} {}".format(self.ec.code_ec, self.email, self.annee)
+
+
 ###
 #  lien pour les etapes des comptes de prof, il faut le remplacer par un systeme de permission générique
 #  c'est uniquement créer pour inviter une dépendance à duck_inscription
 ###
 
-
+@python_2_unicode_compatible
 class SettingsEtapes(Etape):
+
+    def __str__(self):
+        return ""
     class Meta:
         db_table = 'duck_inscription_settingsetape'
         managed = False
 
 
+@python_2_unicode_compatible
 class SettingsUser(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='settings_user')
     etapes = models.ManyToManyField(SettingsEtapes, related_name='etapes_settings', through='SettingsEtapeUser')
+
+    def __str__(self):
+        return ""
 
     class Meta:
         db_table = 'duck_inscription_settingsuser'
         managed = False
 
 
+@python_2_unicode_compatible
 class SettingsEtapeUser(models.Model):
     settings_user = models.ForeignKey(SettingsUser, db_column='settingsuser_id')
     settings_etape = models.ForeignKey(SettingsEtapes, db_column='settingsetape_id')
 
+    def __str__(self):
+        return ""
+
     class Meta:
         db_table = 'duck_inscription_settingsuser_etapes'
         managed = False
+
 
 ###
 #  fin de la merde pondu
