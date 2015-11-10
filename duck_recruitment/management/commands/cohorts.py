@@ -191,21 +191,21 @@ class Command(BaseCommand):
                 spamwriter.writerow([username, row, '3'])
 
     def handle(self, *args, **options):
-        # if options['username']:
-        #     self.create_user_administratif(options['username'])
-        # else:
-        #     all_user = []
-        #     for cod_etp in self.ETAPES:
-        #         users = self.get_all_user(cod_etp)
-        #         all_user.extend(self.get_all_user_csv(users, cod_etp))
-        #     self.create_csv(all_user, '')
-        for cod_etp in self.ETAPES:
-            users = self.get_all_user(cod_etp)
-            for user in users:
-                print self.create_user(user)
-                print self
-                print self.update_user(user)
-            break
+        if options['username']:
+            self.create_user_administratif(options['username'])
+        else:
+            all_user = []
+            for cod_etp in self.ETAPES:
+                users = self.get_all_user(cod_etp)
+                all_user.extend(self.get_all_user_csv(users, cod_etp))
+            self.create_csv(all_user, '')
+        # for cod_etp in self.ETAPES:
+        #     users = self.get_all_user(cod_etp)
+        #     for user in users:
+        #         print self.create_user(user)
+        #         print self
+        #         print self.update_user(user)
+        #     break
 
         #     result = {}
         #     with open('eggs.csv', 'rb') as csvfile:
