@@ -41,7 +41,8 @@ class Command(BaseCommand):
         'M2NPST',
         # social
         'L3NEDU',
-        'M1NEFI'
+        'M1NEFI',
+        'M2NEFI'
         # education
     ]
 
