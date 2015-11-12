@@ -22,12 +22,12 @@
 
                 <div class="col-sm-8">
                     <input type="text"
-                           ng-model="pers" placeholder="Recherche chargé de cours"
+                           ng-model="pers" placeholder="Recherche chargé de cours par nom"
                            typeahead="personne as personne.nom_pat + ' ' + personne.prenom for personne in getPersonne($viewValue)"
                            typeahead-loading="recherche"
                            typeahead-no-results="noResults"
                            typeahead-min-length="3"
-
+                           tooltip="La recherche automatique se déclenche à partir de trois lettres."
                            class="form-control">
                     <i ng-show="recherche" class="glyphicon glyphicon-refresh"></i>
 
