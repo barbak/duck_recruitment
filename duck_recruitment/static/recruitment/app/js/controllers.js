@@ -140,18 +140,28 @@ myApp.controller('SearchCtrl',
             return PersonneDsi.search(value).then(function(response){return response.data.results});
         };
         $scope.addPersonne = function(personne, ec){
-            Agent.resource().save({individu_id:personne.numero, type: personne.type, annee:'2015', code_ec:ec.code_ec,
-                forfaitaire: $scope.forfaitaire, heure: $scope.nb_heure}).$promise.then(function(){
-                $scope.message = {message: 'Opération réussi', type: 'success'};
-                $scope.errors = null;
-                $scope.pers = null;
-            }, function(){
-               $scope.errors = {Erreur: 'Il y a eu une erreur'};
+            $log.log();
+            a = Agent.resource().get();
+            Agent
+                .resource().save({
+                    individu_id:personne.numero,
+                    type: personne.type,
+                    annee:'2015',
+                    code_ec:ec.code_ec,
+                    forfaitaire: $scope.forfaitaire,
+                    heure: $scope.nb_heure})
+                .$promise.then(function() {
+                        $scope.message = {message: 'Opération réussie', type: 'success'};
+                        $scope.pers = null;
+                    },
+                    function() {
+                        $scope.message = {message: 'Il y a eu une erreur', type: 'error'};
 
-            }).then(function(){
-                $rootScope.$broadcast('addPersonneDone', ec);
+                    }).then(function(){
+                        $rootScope.$broadcast('addPersonneDone', ec);
 
-            });
+                    });
+
         };
         $scope.createInvitation =  function(ec){
             $modalInstance.close();
@@ -172,7 +182,7 @@ myApp.controller('InvitationCtrl',
                 forfaitaire: $scope.forfaitaire, nombre_heure_estime: $scope.nb_heure}).$promise.then(function(){
                 $rootScope.$broadcast('addInvitationDone', ec);
                 $scope.errors = null;
-                $scope.message = "L'invitation a bien été envoyé à l'adresse : " + $scope.email
+                $scope.message = "L'invitation a bien été envoyée à l'adresse : " + $scope.email
 
             }, function(request){
                 $scope.errors = request.data;

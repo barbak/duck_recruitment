@@ -102,7 +102,11 @@ class AgentSerializer(serializers.ModelSerializer):
             arg['all_ec_annuel'] = AllEcAnnuel.objects.get_or_create(agent=agent, annee=annee)[0]
         if annee and ec:
             arg['ec'] = Ec.objects.get(code_ec=ec)
-            EtatHeure.objects.get_or_create(**arg)
+            et = EtatHeure.objects.get_or_create(all_ec_annuel=arg['all_ec_annuel'], ec=arg['ec'])[0]
+            for key, value in arg.iteritems():
+                setattr(et, key, value)
+            et.save()
+
         return agent
 
     class Meta:
