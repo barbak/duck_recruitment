@@ -41,13 +41,12 @@ myApp.controller('RecruitmentCtrl',
             $scope.ecs = 'Erreur de chargement, serveur indisponible';
         });
     };
-    $scope.etapes = Etape.query(function(data){
-        $scope.etapes =$filter('filter')($scope.etapes, {cod_vrs_vet:'5'}, false);
-        if($scope.etapes.length >= 1){
-
-        $scope.monEtape = $scope.etapes[0];
-         $scope.listEc({id: $scope.etapes[0].id });
-            }
+    $scope.etapes = Etape.query(function(data) {
+        $scope.etapes = $filter('filter')($scope.etapes, {cod_vrs_vet:'5'}, false);
+        if($scope.etapes.length >= 1) {
+            $scope.monEtape = $scope.etapes[0];
+            $scope.listEc({id: $scope.etapes[0].id });
+        }
     });
     $scope.$on('addPersonneDone', function(event, ec){
         updateAgents(ec);
@@ -118,6 +117,14 @@ myApp.controller('RecruitmentCtrl',
             }
         });
     };
+    $scope.open_summary_download = function() {
+        var modalInstance = $modal.open({
+            templateUrl: '/static/recruitment/app/partials/downloadFile.html',
+            controller: 'DownloadCtrl',
+            resolve: {
+            }
+        });
+    };
 }]);
 
 myApp.controller('ModifyCtrl',
@@ -126,8 +133,53 @@ myApp.controller('ModifyCtrl',
             // $log.log(etat_heure);
             $scope.etat_heure = etat_heure;
             $scope.save = function (etat_heure) {
-            EtatHeure.resource().save(etat_heure);
-        }
+                EtatHeure.resource().save(etat_heure);
+            }
+    }]);
+
+myApp.controller('DownloadCtrl',
+    ['$scope', '$log', 'Etape', '$filter', 'Ec',
+    function ($scope, $log, Etape, $filter, Ec) {
+        $scope.download = function() {
+
+        };
+        $scope.data = {
+            cb_ec: false,
+            cb_etape: false,
+            monEtape: null,
+            monEc:  null,
+            myUrl: '/recruitment/v1/summary',
+            file_type: 'csv'
+        };
+        //$scope.monEtape = null;
+        //$scope.monEc = null;
+        $scope.etapes = Etape.query(function(data) {
+            $scope.etapes = $filter('filter')($scope.etapes, {cod_vrs_vet:'5'}, false);
+            if($scope.etapes.length >= 1) {
+                $scope.data.monEc = null;
+                $scope.data.monEtape = $scope.etapes[0];
+                $scope.loadEcs({ id: $scope.etapes[0].id });
+            }
+        });
+        $scope.ecs = {};
+        $scope.loadEcs = function (etape) {
+            $scope.ecs = Ec.ec_by_etape(etape).success(function(data){
+                $scope.ecs = data.results;
+                $scope.data.monEc = $scope.ecs[0];
+            }).error(function(data, status, headers, config) {
+              $scope.ecs = 'Erreur de chargement, serveur indisponible';
+            });
+        };
+        $scope.updateUrl = function () {
+            $scope.data.myUrl = '/recruitment/v1/summary';
+            $scope.data.myUrl += "?type=" + $scope.data.file_type;
+            if ($scope.data.cb_ec && $scope.data.cb_etape) {
+                $scope.data.myUrl += '&ec=' + $scope.data.monEc
+            } else if (!$scope.data.cb_ec && $scope.data.cb_etape) {
+                $scope.data.myUrl += '&etape=' + $scope.data.monEtape.cod_etp;
+            }
+        };
+        $scope.updateUrl();
     }]);
 
 myApp.controller('SearchCtrl',

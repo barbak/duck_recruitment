@@ -1,8 +1,11 @@
 # coding=utf-8
 from __future__ import unicode_literals
-from datetime import date
+from datetime import date, datetime
 from django.contrib.auth.models import User
-from django.views.generic import TemplateView
+from django.http import HttpResponse
+from django.views.generic import TemplateView, View
+from openpyxl.writer.excel import save_virtual_workbook
+from openpyxl import Workbook
 from rest_framework import filters
 from rest_framework import views
 from rest_framework import viewsets
@@ -131,3 +134,73 @@ class ConfirmeInvitation(views.APIView):
         invitation.numero = data['numero']
         invitation.save()
         return Response(InvitationEcSerializer(invitation).data)
+
+
+### SUMMARY VIEW ###
+
+def convert_etat_heure_to_summary_line_dict(etat_heure):
+    return {
+        'etape': etat_heure.ec.etape.all()[0].cod_etp.cod_etp.encode("ascii", "ignore"),
+        'ec': etat_heure.ec.code_ec.encode("ascii", "ignore"),
+        'nom': etat_heure.all_ec_annuel.agent.last_name.encode("ascii", "ignore"),
+        'prenom': etat_heure.all_ec_annuel.agent.first_name1.encode("ascii", "ignore"),
+        'tit': etat_heure.all_ec_annuel.agent.type.encode("ascii", "ignore"),
+        'email': etat_heure.all_ec_annuel.agent.email.encode("ascii", "ignore"),
+    }
+
+def summary_lines_to_csv(summary_lines):
+    csv_str = ""
+    for l in summary_lines:
+        csv_str += "{};{};{};{};{};{}\n".format(l['etape'], l['ec'],
+                                                l['nom'], l['prenom'],
+                                                l['tit'], l['email'])
+    return csv_str
+
+def summary_lines_to_xls(summary_lines):
+    wb = Workbook()
+    ws = wb.active
+    for l in summary_lines:
+        ws.append([l['etape'], l['ec'], l['nom'], l['prenom'], l['tit'], l['email']])
+    return wb
+
+
+class SummaryView(View):
+    def get(self, request):
+        format_type = request.GET.get('type', 'csv') # csv or xls
+        etp_name = request.GET.get('etp')
+        ec_name = request.GET.get('ec')
+        vrs_vet_name = request.GET.get('vrs_vet')
+        summary_lines = []
+
+        if not ec_name and not etp_name:
+            for eh  in EtatHeure.objects.all():
+                summary_lines.append(convert_etat_heure_to_summary_line_dict(eh))
+
+        if ec_name:
+            ec = Ec.objects.get(pk=ec_name)
+            for eh  in EtatHeure.objects.filter(ec=ec):
+                summary_lines.append(convert_etat_heure_to_summary_line_dict(eh))
+
+        if etp_name:
+            for eh  in EtatHeure.objects.filter(ec__etape__cod_etp__in=[etp_name],
+                                                ec__etape__cod_vrs_vet__in=[vrs_vet_name]):
+                summary_lines.append(convert_etat_heure_to_summary_line_dict(eh))
+
+        if format_type == 'csv':
+            response = HttpResponse(summary_lines_to_csv(summary_lines),
+                                    content_type="text/csv")
+            response['Content-Disposition'] = 'attachment; filename=summary_recruitment_{}.csv'\
+                    .format(datetime.today().strftime('%d-%m-%Y'))
+            return response
+
+        elif format_type == 'xls':
+            response = HttpResponse(save_virtual_workbook(summary_lines_to_xls(summary_lines)),
+                                    content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=summary_recruitment_{}.xlsx'\
+                    .format(datetime.today().strftime('%d-%m-%Y'))
+            return response
+
+        else:
+            raise NotImplementedError('')
+
+### / SUMMARY VIEW ###
