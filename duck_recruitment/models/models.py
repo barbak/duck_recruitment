@@ -184,7 +184,7 @@ class AllEcAnnuel(models.Model):
     date_creation = models.DateField(auto_now_add=True)
 
     def all_ec_lib(self):
-        return ['{} {}'.format(ec.ec.code_ec, ec.ec.lib_ec.encode("ascii", "ignore"))
+        return ['{} {} {}'.format(ec.ec.code_ec, ec.ec.lib_ec.encode("ascii", "ignore"), ec.etps)
                 for ec in self.etatheure_set.all()]
 
     def __str__(self):
@@ -199,6 +199,10 @@ class EtatHeure(models.Model):
     nombre_heure_estime = models.FloatField(null=True, blank=True)
     valider = models.BooleanField(default=False)
     date_creation = models.DateField(auto_now_add=True)
+
+    @property
+    def etps(self):
+        return ' '.join([etp.cod_etp.cod_etp for etp in self.ec.etape.all()])
 
     def envoi_mail_information(self):
         recipients = [self.all_ec_annuel.agent.email if not settings.DEBUG else 'paul.guichon@gmail.com']

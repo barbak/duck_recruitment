@@ -13,16 +13,13 @@ from duck_recruitment.models import Agent
 ANNEE = 2015
 
 class Command(BaseCommand):
-
-
     def handle(self, *args, **options):
         with open('/vagrant/extraction.csv', 'wb') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=';',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
-
             for agent in Agent.objects.filter(allecannuel__etatheure__isnull=False):
-                spamwriter.writerow([agent.last_name, agent.first_name])
+                # spamwriter.writerow()
                 for allec in agent.allecannuel_set.all():
-                    spamwriter.writerow(allec.all_ec_lib())
+                    spamwriter.writerow([agent.last_name, agent.first_name, agent.type]+allec.all_ec_lib())
 
 
