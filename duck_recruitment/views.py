@@ -141,6 +141,7 @@ class ConfirmeInvitation(views.APIView):
 def convert_etat_heure_to_summary_line_dict(etat_heure):
     return {
         'etape': etat_heure.ec.etape.all()[0].cod_etp.cod_etp.encode("ascii", "ignore"),
+        'libelle_etape': etat_heure.ec.etape.all()[0].cod_etp.lib_etp.encode("ascii", "ignore"),
         'ec': etat_heure.ec.code_ec.encode("ascii", "ignore"),
         'nom': etat_heure.all_ec_annuel.agent.last_name.encode("ascii", "ignore"),
         'prenom': etat_heure.all_ec_annuel.agent.first_name1.encode("ascii", "ignore"),
@@ -151,16 +152,18 @@ def convert_etat_heure_to_summary_line_dict(etat_heure):
 def summary_lines_to_csv(summary_lines):
     csv_str = ""
     for l in summary_lines:
-        csv_str += "{};{};{};{};{};{}\n".format(l['etape'], l['ec'],
-                                                l['nom'], l['prenom'],
-                                                l['tit'], l['email'])
+        csv_str += "{};{};{};{};{};{};{}\n".format(l['etape'], l['libelle_etape'],
+                                                   l['ec'],
+                                                   l['nom'], l['prenom'],
+                                                   l['tit'], l['email'])
     return csv_str
 
 def summary_lines_to_xls(summary_lines):
     wb = Workbook()
     ws = wb.active
     for l in summary_lines:
-        ws.append([l['etape'], l['ec'], l['nom'], l['prenom'], l['tit'], l['email']])
+        ws.append([l['etape'], l['libelle_etape'], l['ec'],
+                   l['nom'], l['prenom'], l['tit'], l['email']])
     return wb
 
 
@@ -191,6 +194,7 @@ class SummaryView(View):
                                     content_type="text/csv")
             response['Content-Disposition'] = 'attachment; filename=summary_recruitment_{}.csv'\
                     .format(datetime.today().strftime('%d-%m-%Y'))
+
             return response
 
         elif format_type == 'xls':
