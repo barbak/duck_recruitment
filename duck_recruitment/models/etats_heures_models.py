@@ -39,7 +39,6 @@ class HeureForfait(models.Model):
     value = models.FloatField()
     annee = models.IntegerField(default=2015)
     semestriel = models.BooleanField(default=False)
-    proratise = models.BooleanField(u"Fixe", default=True)
 
     def __str__(self):
         return u"%s %s" % (self.type_ec, self.value)
