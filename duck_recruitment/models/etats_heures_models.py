@@ -7,8 +7,15 @@ from duck_recruitment.models import EtatHeure, EtapeVet, Ec
 
 @python_2_unicode_compatible
 class TypeEc(models.Model):
-    label = models.CharField(max_length=60)
-    etape = models.ForeignKey(EtapeVet)
+    """
+    Permet de créer des groupes d'EC d'une étape possédant les mêmes propriétés financières.
+    Exemple :
+    Ec droit de L1NDRO : groupe Standard
+    Ec jurique de L1NDRO : groupe Standard
+    forfait, horforfait etc de EC droit = EC juridique
+    """
+    label = models.CharField(max_length=60)  # validée
+    etape = models.ForeignKey(EtapeVet)  # validée
 
     def __str__(self):
         return u"%s %s" % (self.label, self.etape.cod_etp)
@@ -16,8 +23,8 @@ class TypeEc(models.Model):
 
 @python_2_unicode_compatible
 class TypeEtatHeure(models.Model):
-    code = models.CharField(primary_key=True, max_length=5)
-    label = models.CharField(u"Label", max_length=30)
+    code = models.CharField(primary_key=True, max_length=5)  # validée
+    label = models.CharField(u"Label", max_length=30)  # validée
 
     def __str__(self):
         return self.label
@@ -25,8 +32,11 @@ class TypeEtatHeure(models.Model):
 
 @python_2_unicode_compatible
 class TypeActe(models.Model):
-    label = models.CharField(max_length=60)
-    type_forfait = models.BooleanField(default=False)
+    """
+    les types d'actes pédagoqigues disponibles decomposer une activité d'enseignement
+    """
+    label = models.CharField(max_length=60)  # validée
+    type_forfait = models.BooleanField(default=False)  # ???????
 
     def __str__(self):
         return self.label
@@ -34,11 +44,14 @@ class TypeActe(models.Model):
 
 @python_2_unicode_compatible
 class HeureForfait(models.Model):
-    type_ec = models.ForeignKey(TypeEc)
-    etape = models.ForeignKey(EtapeVet)
-    value = models.FloatField()
-    annee = models.IntegerField(default=2015)
-    semestriel = models.BooleanField(default=False)
+    """
+    décrit la propriété financière d'un type d'ec pour une étape donnée.
+    """
+    type_ec = models.ForeignKey(TypeEc)  # validée
+    etape = models.ForeignKey(EtapeVet)  # validée
+    value = models.FloatField()  # validée
+    annee = models.IntegerField(default=2015)  # validée
+    semestriel = models.BooleanField(default=False)  # validée TODO voir si ce n'est pas mieux de mettre ce champ ailleurs
 
     def __str__(self):
         return u"%s %s" % (self.type_ec, self.value)
@@ -46,11 +59,13 @@ class HeureForfait(models.Model):
 
 @python_2_unicode_compatible
 class HorsForfait(models.Model):
+    """
+    Permet savoir le tarif des actes qui sont hors forfait.
+    """
     type_acte = models.ForeignKey(TypeActe)
     etape = models.ForeignKey(EtapeVet)
     value = models.FloatField()
     annee = models.IntegerField(default=2015)
-    extra = 1
 
     def __str__(self):
         return u"%s %s" % (self.type_acte, self.value)
@@ -58,6 +73,12 @@ class HorsForfait(models.Model):
 
 @python_2_unicode_compatible
 class Forfait(models.Model):
+    """
+    Pour un type d'ec, permet de savoir de quel type et le nombre d'unité est composé le forfait du type :
+    Exemple : pour le type standart de L1NDRO grace à HeureForfait le forfait vaut 15h.
+    Avec Forfait je sais que qu'il y a correction de copie (200 copies soit 5h ) et Cours (10h)
+
+    """
     type_ec = models.ForeignKey(TypeEc)
     type_acte = models.ForeignKey(TypeActe)
     etape = models.ForeignKey(EtapeVet)

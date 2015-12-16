@@ -5,7 +5,7 @@ import xadmin
 from django.views.decorators.cache import never_cache
 from xadmin.views import filter_hook
 
-from duck_recruitment.models import Titulaire
+from duck_recruitment.models import Titulaire, TypeActe, EtapeVet, TypeEc, HeureForfait
 
 
 class RecruitmentDashboard(views.Dashboard):
@@ -29,4 +29,25 @@ class RecruitmentDashboard(views.Dashboard):
 xadmin.site.register_view(r'^recruitment/$', RecruitmentDashboard, 'recruitment_dashboard')
 
 xadmin.site.register(Titulaire)
+xadmin.site.register(TypeActe)
 
+
+class TypeEcsAdmin(object):
+    model = TypeEc
+    style = 'table'
+    extra = 1
+
+class HeureForfaitAdmin(object):
+    model = HeureForfait
+    style = 'table'
+    extra = 1
+
+class EtapeVetAdmin(object):
+    fields = ('cod_etp',)
+    readonly_fields = ('cod_etp',)
+    inlines = [TypeEcsAdmin, HeureForfaitAdmin]
+
+    # def
+
+
+xadmin.site.register(EtapeVet, EtapeVetAdmin)
