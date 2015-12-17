@@ -14,7 +14,6 @@ class RecruitmentDashboard(views.Dashboard):
 
     def get_context(self):
         context = super(RecruitmentDashboard, self).get_context()
-        # context['personnes'] = Personnel.objects.root_nodes()
         return context
 
     @filter_hook
