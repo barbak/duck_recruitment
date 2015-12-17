@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+from django.db import models
 from xadmin import views
 import xadmin
 
@@ -41,10 +42,25 @@ class HeureForfaitAdmin(object):
     style = 'table'
     extra = 1
 
+    @filter_hook
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        # If it uses an intermediary model that isn't auto created, don't show
+        # a field in admin.
+        if isinstance(db_field, models.ManyToManyField) and not db_field.rel.through._meta.auto_created:
+            return None
+        attrs = self.get_field_attrs(db_field, **kwargs)
+        if db_field.name == 'type_ec':
+            kwargs['queryset'] = self.model_instance.typeec_set.all()
+        return db_field.formfield(**dict(attrs, **kwargs))
+
 class EtapeVetAdmin(object):
     fields = ('cod_etp',)
     readonly_fields = ('cod_etp',)
     inlines = [TypeEcsAdmin, HeureForfaitAdmin]
+
+    def queryset(self):
+        queryset = super(EtapeVetAdmin, self).queryset()
+        return queryset.filter(cod_vrs_vet__in=[510,520])
 
     # def
 
