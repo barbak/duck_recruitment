@@ -161,11 +161,11 @@ myApp.controller('DownloadCtrl',
                 $scope.loadEcs({ id: $scope.etapes[0].id });
             }
         });
-        $scope.ecs = {};
+        $scope.ecs = [];
         $scope.loadEcs = function (etape) {
             $scope.ecs = Ec.ec_by_etape(etape).success(function(data){
                 $scope.ecs = data.results;
-                $scope.data.monEc = $scope.ecs[0];
+                $scope.data.monEc = $scope.ecs[0].id;
             }).error(function(data, status, headers, config) {
               $scope.ecs = 'Erreur de chargement, serveur indisponible';
             });
@@ -179,6 +179,7 @@ myApp.controller('DownloadCtrl',
                 $scope.data.myUrl += '&etape=' + $scope.data.monEtape.cod_etp;
             }
         };
+
         $scope.updateUrl();
     }]);
 

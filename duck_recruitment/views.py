@@ -138,31 +138,45 @@ class ConfirmeInvitation(views.APIView):
 
 ### SUMMARY VIEW ###
 
+# def convert_etat_heure_to_summary_line_dict(etat_heure):
+#     return {
+#         'etape': etat_heure.ec.etape.all()[0].cod_etp.cod_etp.encode("ascii", "ignore"),
+#         'libelle_etape': etat_heure.ec.etape.all()[0].cod_etp.lib_etp.encode("ascii", "ignore"),
+#         'ec': etat_heure.ec.code_ec.encode("ascii", "ignore"),
+#         'libelle_ec': etat_heure.ec.lib_ec.encode("ascii", "ignore"),
+#         'nom': etat_heure.all_ec_annuel.agent.last_name.encode("ascii", "ignore"),
+#         'prenom': etat_heure.all_ec_annuel.agent.first_name1.encode("ascii", "ignore"),
+#         'tit': etat_heure.all_ec_annuel.agent.type.encode("ascii", "ignore"),
+#         'email': etat_heure.all_ec_annuel.agent.email.encode("ascii", "ignore"),
+#     }
+
 def convert_etat_heure_to_summary_line_dict(etat_heure):
     return {
-        'etape': etat_heure.ec.etape.all()[0].cod_etp.cod_etp.encode("ascii", "ignore"),
-        'libelle_etape': etat_heure.ec.etape.all()[0].cod_etp.lib_etp.encode("ascii", "ignore"),
-        'ec': etat_heure.ec.code_ec.encode("ascii", "ignore"),
-        'nom': etat_heure.all_ec_annuel.agent.last_name.encode("ascii", "ignore"),
-        'prenom': etat_heure.all_ec_annuel.agent.first_name1.encode("ascii", "ignore"),
-        'tit': etat_heure.all_ec_annuel.agent.type.encode("ascii", "ignore"),
-        'email': etat_heure.all_ec_annuel.agent.email.encode("ascii", "ignore"),
+        'etape': etat_heure.ec.etape.all()[0].cod_etp.cod_etp,
+        'libelle_etape': etat_heure.ec.etape.all()[0].cod_etp.lib_etp,
+        'ec': etat_heure.ec.code_ec,
+        'libelle_ec': etat_heure.ec.lib_ec,
+        'nom': etat_heure.all_ec_annuel.agent.last_name,
+        'prenom': etat_heure.all_ec_annuel.agent.first_name1,
+        'tit': etat_heure.all_ec_annuel.agent.type,
+        'email': etat_heure.all_ec_annuel.agent.email,
     }
+
 
 def summary_lines_to_csv(summary_lines):
     csv_str = ""
     for l in summary_lines:
-        csv_str += "{};{};{};{};{};{};{}\n".format(l['etape'], l['libelle_etape'],
-                                                   l['ec'],
-                                                   l['nom'], l['prenom'],
-                                                   l['tit'], l['email'])
+        csv_str += "{};{};{};{};{};{};{};{}\n".format(l['etape'].encode("ascii", "ignore"), l['libelle_etape'].encode("ascii", "ignore"),
+                                                   l['ec'].encode("ascii", "ignore"), l['libelle_ec'].encode("ascii", "ignore"),
+                                                   l['nom'].encode("ascii", "ignore"), l['prenom'].encode("ascii", "ignore"),
+                                                   l['tit'].encode("ascii", "ignore"), l['email'].encode("ascii", "ignore"))
     return csv_str
 
 def summary_lines_to_xls(summary_lines):
     wb = Workbook()
     ws = wb.active
     for l in summary_lines:
-        ws.append([l['etape'], l['libelle_etape'], l['ec'],
+        ws.append([l['etape'], l['libelle_etape'], l['ec'], l['libelle_ec'],
                    l['nom'], l['prenom'], l['tit'], l['email']])
     return wb
 
@@ -170,7 +184,7 @@ def summary_lines_to_xls(summary_lines):
 class SummaryView(View):
     def get(self, request):
         format_type = request.GET.get('type', 'csv') # csv or xls
-        etp_name = request.GET.get('etp')
+        etp_name = request.GET.get('etape')
         ec_name = request.GET.get('ec')
         vrs_vet_name = request.GET.get('vrs_vet')
         summary_lines = []
@@ -185,8 +199,8 @@ class SummaryView(View):
                 summary_lines.append(convert_etat_heure_to_summary_line_dict(eh))
 
         if etp_name:
-            for eh  in EtatHeure.objects.filter(ec__etape__cod_etp__in=[etp_name],
-                                                ec__etape__cod_vrs_vet__in=[vrs_vet_name]):
+            for eh  in EtatHeure.objects.filter(ec__etape__cod_etp__cod_etp__in=[etp_name],
+                                                ec__etape__cod_vrs_vet__in=[510, 520]):
                 summary_lines.append(convert_etat_heure_to_summary_line_dict(eh))
 
         if format_type == 'csv':
