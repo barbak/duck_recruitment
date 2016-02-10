@@ -245,3 +245,85 @@ myApp.controller('InvitationCtrl',
         };
 
 }]);
+
+myApp.controller('EtapesCtrl', ['$scope', 'Etape', '$filter','Ec','$modal', 'RecrutementService',
+    function($scope, Etape, $filter, Ec, $modal, RecrutementService){
+    $scope.monEtape = null;
+    $scope.choix_prop_ec = [
+        {
+        choix:'0',
+        label: 'Annuel'},
+        {choix: '1', label: 'Premier semestre'},
+        {choix:'2', label: 'Seconde semestre'
+    }];
+    Etape.query(function(data) {
+        $scope.etapes = $filter('filter')(data, {cod_vrs_vet:'5'}, false);
+        if($scope.etapes.length >= 1) {
+            $scope.monEtape = $scope.etapes[8];
+
+            $scope.listEc($scope.monEtape);
+        }
+    });
+    $scope.listEc = function(etape){
+        Ec.ec_by_etape(etape).success(function(data){
+            $scope.ecs = data.results;
+            RecrutementService.prop_ec.resource.query({etape:etape.id}, function(data){
+               angular.forEach($scope.ecs, function(ec){
+                   ec.prop_ec = data.find(function(proc_ec){
+                       if(proc_ec.ec == ec.id){
+                           return proc_ec;
+                       }
+                       return false;
+                   });
+               });
+            });
+
+        }).error(function(data, status, headers, config) {
+            $scope.ecs = 'Erreur de chargement, serveur indisponible';
+        });
+    };
+    $scope.modify_etape = function(etape){
+        var modalInstance = $modal.open({
+            templateUrl: '/static/recruitment/app/partials/update_etape.html',
+            controller: 'ModifyEtapeCtrl',
+            resolve: {
+                etape: function() { return etape }
+            },
+            size: "lg",
+            windowClass: 'my-modal-popup'
+        });
+    };
+
+}]);
+
+myApp.controller('ModifyEtapeCtrl', ['$scope', 'etape','Etape', 'RecrutementService', function($scope, etape, Etape, RecrutementService){
+    $scope.etape = etape;
+    RecrutementService.type_ec.resource.query({etape: etape.id}, function(data){
+        $scope.types_ec = data;
+
+    });
+    RecrutementService.heure_forfait.resource.query({etape: etape.id}, function(data){
+        $scope.heures_forfaits = data;
+
+    });
+    $scope.save_new_type_ec = function(new_type_ec, etape){
+        var ressource = RecrutementService.type_ec.resource;
+        var new_ec = new ressource({label: new_type_ec.new_label, etape: etape.id});
+        new_ec.$save(function(type_ec, putResponseHeaders) {
+            $scope.types_ec.push(type_ec);
+            new_type_ec.new_label = "";
+          });
+
+    };
+    $scope.save_new_heure_forfait = function(new_heure_forfait, etape){
+        new_heure_forfait.etape = etape.id;
+        var ressource = RecrutementService.heure_forfait.resource;
+        var heure_forfait = new ressource(new_heure_forfait);
+        heure_forfait.$save(function(heure_forfait, putResponseHeaders) {
+            $scope.heures_forfaits.push(heure_forfait);
+            $scope.new_heure_forfait={};
+          });
+
+    }
+
+}]);

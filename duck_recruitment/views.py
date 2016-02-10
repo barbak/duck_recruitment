@@ -11,16 +11,19 @@ from rest_framework import views
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
-from duck_recruitment.filters import EcFilter, CcourIndividuFilter, EtatHeureFilter, TitulaireFilter, InvitationEcFilter
+from duck_recruitment.filters import EcFilter, CcourIndividuFilter, EtatHeureFilter, TitulaireFilter, InvitationEcFilter, \
+    TypeEcFilter, HeureForfaitFilter, PropEcFilter
 from .models import CCOURS_Individu, Ec, Agent, EtapeVet, EtatHeure, AllEcAnnuel, Titulaire, \
-    InvitationEc  # , BaseIndividu
+    InvitationEc, TypeEtatHeure, TypeEc, HeureForfait, PropEc  # , BaseIndividu
 from .serializers import CCOURS_IndividuSerializer, AgentSerializer, EcSerializer, EtapeSerializer, EtatHeureSerializer, \
-    AllEcAnnuelSerializer, TitulaireSerializer, InvitationEcSerializer, UserSerializer
+    AllEcAnnuelSerializer, TitulaireSerializer, InvitationEcSerializer, UserSerializer, TypeEtatHeureSerializer, \
+    TypeEcSerializer, HeureForfaitSerializer, PropEcSerializer
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
     def get_queryset(self):
         return User.objects.filter(username=self.request.user.username)
 
@@ -199,7 +202,7 @@ class SummaryView(View):
                 summary_lines.append(convert_etat_heure_to_summary_line_dict(eh))
 
         if etp_name:
-            for eh  in EtatHeure.objects.filter(ec__etape__cod_etp__cod_etp__in=[etp_name],
+            for eh in EtatHeure.objects.filter(ec__etape__cod_etp__cod_etp__in=[etp_name],
                                                 ec__etape__cod_vrs_vet__in=[510, 520]):
                 summary_lines.append(convert_etat_heure_to_summary_line_dict(eh))
 
@@ -222,3 +225,30 @@ class SummaryView(View):
             raise NotImplementedError('')
 
 ### / SUMMARY VIEW ###
+
+
+class TypeEtatHeureViewset(viewsets.ModelViewSet):
+    queryset = TypeEtatHeure.objects.all()
+    serializer_class = TypeEtatHeureSerializer
+
+
+class TypeEcViewset(viewsets.ModelViewSet):
+    queryset = TypeEc.objects.all()
+    serializer_class = TypeEcSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = TypeEcFilter
+
+
+class HeureForfaitViewset(viewsets.ModelViewSet):
+    queryset = HeureForfait.objects.all()
+    serializer_class = HeureForfaitSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = HeureForfaitFilter
+
+
+class PropEcViewset(viewsets.ModelViewSet):
+    queryset = PropEc.objects.exclude(ec__type_ec__in=['CSEM', 'SEM', 'CVET', 'VETM', 'BLOC', 'UE', 'PAR'])
+    serializer_class = PropEcSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = PropEcFilter
+

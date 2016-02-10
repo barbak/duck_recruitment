@@ -420,13 +420,13 @@ class Acte(models.Model):
 
 @python_2_unicode_compatible
 class PropEc(models.Model):
+    """
+    propriété de l'ec pour calculer la proratisation et le premier semestre
+    """
     type = models.CharField(choices=(('0', 'Annuel'), ('1', 'Premier semestre'), ('2', 'Seconde semestre')),
                             default='0', max_length=1)
     annee = models.IntegerField(default=2015)
     ec = models.ForeignKey(Ec)
-
-    class Meta:
-        app_label = "jeton"
 
     def __str__(self):
         return u"%s %s" % (self.ec, self.annee)

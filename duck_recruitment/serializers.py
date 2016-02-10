@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django_apogee.models import Etape
 from rest_framework import serializers
-from .models import CCOURS_Individu, Agent, Ec, EtapeVet, AllEcAnnuel, EtatHeure, Titulaire, InvitationEc
+from .models import CCOURS_Individu, Agent, Ec, EtapeVet, AllEcAnnuel, EtatHeure, Titulaire, InvitationEc, TypeEtatHeure, \
+    TypeEc, HeureForfait, PropEc
 
 
 class CCOURS_IndividuSerializer(serializers.ModelSerializer):
@@ -139,9 +140,17 @@ class UserSerializer(serializers.ModelSerializer):
     """
     pour les user
     """
+
+    groups = serializers.StringRelatedField(many=True)
+    has_recrutement_perm = serializers.SerializerMethodField()
+
+    def get_has_recrutement_perm(self, obj):
+        return "recrutement" in obj.groups.values_list('name', flat=True) or obj.is_superuser
+
     class Meta:
         model = User
-        fields = ('username', 'is_superuser', 'email', 'groups')
+        fields = ('username', 'is_superuser', 'email', "groups", 'has_recrutement_perm')
+
 
 class InvitationEcSerializer(serializers.ModelSerializer):
 
@@ -171,3 +180,28 @@ class InvitationEcSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InvitationEc
+
+
+class TypeEtatHeureSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TypeEtatHeure
+
+
+class TypeEcSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TypeEc
+
+
+class HeureForfaitSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = HeureForfait
+
+
+class PropEcSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PropEc
+

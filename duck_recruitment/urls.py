@@ -16,6 +16,10 @@ router.register(r'v1/titulaires', views.TitulaireViewSet, base_name='titulaire')
 router.register(r'v1/invitations_ec', views.InvitationEcViewSet, base_name='invitaions_ec')
 router.register(r'v1/invitations_ec', views.InvitationEcViewSet, base_name='invitaions_ec')
 router.register(r'v1/users', views.UserViewSet, base_name='users')
+router.register(r'v1/type_etat_heure', views.TypeEtatHeureViewset, base_name='type_etat_heure')
+router.register(r'v1/type_ec', views.TypeEcViewset, base_name='type_ec')
+router.register(r'v1/heure_forfait', views.HeureForfaitViewset, base_name='heure_forfait')
+router.register(r'v1/prop_ec', views.PropEcViewset, base_name='prop_ec')
 
 urlpatterns = [
     url(r'^', include(router.urls)),

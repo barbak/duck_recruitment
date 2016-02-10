@@ -1,0 +1,45 @@
+<div class="well">
+    <div class="well text-center">
+
+         <a  class="btn btn-primary" href="#/">Retour</a>
+
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Choisissez une étape pour selectionner les EC.
+        </div>
+        <div class="panel-body">
+            <form action="">
+            <div class="form-group">
+               <div class="col-sm-4">
+                    <select class="form-control"
+                            ng-options="etape.lib_etp + ' ' + etape.cod_vrs_vet for etape in etapes"
+                            ng-model="monEtape"
+                            ng-change="listEc(monEtape)">
+                    </select>
+
+               </div>
+                <div class="col-sm-2"><button class="btn btn-primary" ng-click="modify_etape(monEtape)">Editer l'étape</button></div>
+                <label for="inputEmail3" class="col-sm-2 control-label">Filtrer les EC (code ou intitullé)</label>
+                <div class="col-sm-3">
+                    <input class="form-control" ng-model="search" placeholder="Chercher par un code EC">
+               </div>
+            </div>
+                </form>
+        </div>
+
+    </div>
+    <div class="panel panel-primary">
+    <div class="panel-body">
+    <table class="table table-bordered table-striped">
+        <tr ng-repeat="ec in ecs | filter:search">
+            <td>{{ ec.code_ec }}</td>
+            <td>{{ ec.lib_ec }}</td>
+            <td>
+                <select ng-options="item.choix as item.label for item in choix_prop_ec" ng-model="ec.prop_ec.type" ng-change="ec.prop_ec.$update()"></select>
+            </td>
+        </tr>
+    </table>
+        </div>
+        </div>
+</div>

@@ -11,6 +11,10 @@ myApp.config(['$routeProvider', '$httpProvider',
                 templateUrl: '/static/recruitment/app/partials/home.html',
                 controller: 'RecruitmentCtrl'
             }).
+            when('/etapes/', {
+                templateUrl: '/static/recruitment/app/partials/edit_etape.html',
+                controller: 'EtapesCtrl'
+            }).
             otherwise({
                 redirectTo: '/'
             });

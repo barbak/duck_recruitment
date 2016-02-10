@@ -1,6 +1,8 @@
 <div class="well">
     <div class="well text-center">
-        <button class="btn btn-primary" ng-click="open_summary_download()">Télécharger ...</button>
+
+         <a ng-if="user.has_recrutement_perm == true" class="btn btn-primary" href="#/etapes/" >Editer les propriétés des étapes</a>
+         <button class="btn btn-primary" ng-click="open_summary_download()">Télécharger ...</button>
     </div>
     <div class="panel panel-primary">
         <div class="panel-heading">

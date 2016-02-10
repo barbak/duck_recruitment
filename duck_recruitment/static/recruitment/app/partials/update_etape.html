@@ -1,0 +1,135 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+            aria-hidden="true">&times;</span></button>
+    <h3 class="modal-title">Modifier une personne</h3>
+</div>
+<div class="modal-body">
+    <div ng-if="message" class="alert alert-{{ message.type }}">{{ message.message }}</div>
+    <div ng-if="errors" class="alert alert-danger">
+        <ul>
+            <li ng-repeat="(key, value) in errors">{{ key }}
+                <ul>
+                    <li ng-repeat="i in value">{{ i }}</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="well">
+        <h2>
+            {{ etape.lib_etp }} {{ etape.cod_vrs_vet }}
+        </h2>
+
+    </div>
+    <div class="well">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Type de groupe d'ec</div>
+                    <div class="panel-body">
+                        <div class="form-horizontal" novalidate>
+                            <div class="form-group">
+                                <div class=" col-sm-12">
+                                    <label for="inputEmail3" class=" control-label">Titre</label>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-repeat="type_ec in types_ec">
+
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control" ng-model="type_ec.label"
+                                           ng-blur="type_ec.$update()"
+                                           ng-keyup="$event.keyCode == 13 && type_ec.$update()">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <input id="new_ec" type="text" class="form-control" ng-model="type_ec.new_label">
+                                </div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-primary" ng-click="save_new_type_ec(type_ec, etape)"
+                                            ng-keyup="$event.keyCode == 13 && save_new_type_ec(type_ec, etape)">Ajouter
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-sm-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Type de groupe d'ec</div>
+                    <div class="panel-body">
+                        <div class="form-horizontal" novalidate>
+                            <div class="form-group">
+                                <div class=" col-sm-3">
+                                    <label for="inputEmail3" class=" control-label">Type EC</label>
+                                </div>
+                                <div class=" col-sm-2">
+                                    <label for="inputEmail3" class=" control-label">Valeur</label>
+                                </div>
+                                <div class=" col-sm-2">
+                                    <label for="inputEmail3" class=" control-label">Semestriel</label>
+                                </div>
+                                <div class=" col-sm-2">
+                                    <label for="inputEmail3" class=" control-label">Fixe</label>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-repeat="heure_forfait in heures_forfaits ">
+
+                                <div class="col-sm-3">
+                                    <select ng-options="item.id as item.label for item in types_ec"
+                                            ng-model="heure_forfait.type_ec"
+                                            ng-change="heure_forfait.$update()"></select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="text" class="form-control" ng-model="heure_forfait.value"
+                                           ng-blur="heure_forfait.$update()"
+                                           ng-keyup="$event.keyCode == 13 && heure_forfait.$update()">
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="checkbox" class="form-control" ng-model="heure_forfait.semestriel"
+                                           ng-change="heure_forfait.$update()">
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="checkbox" class="form-control" ng-model="heure_forfait.proratise"
+                                           ng-change="heure_forfait.$update()">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <select ng-options="item.id as item.label for item in types_ec"
+                                            ng-model="new_heure_forfait.type_ec"></select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="text" class="form-control" ng-model="new_heure_forfait.value">
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="checkbox" class="form-control" ng-model="new_heure_forfait.semestriel">
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="checkbox" class="form-control" ng-model="new_heure_forfait.proratise">
+                                </div>
+
+
+                            </div>
+                            <div class="col-lg-2">
+                                <button class="btn btn-primary"
+                                        ng-click="save_new_heure_forfait(new_heure_forfait, etape)">Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+
+        <button class="btn btn-warning" ng-click="$close()"><span class="glyphicon glyphicon-remove"></span> Fermer
+        </button>
+
+    </div>

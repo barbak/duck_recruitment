@@ -2,6 +2,13 @@
 {% load staticfiles %}
 {% block extrastyle %}
      <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+        <style TYPE="text/css">
+        .my-modal-popup > .modal-lg {
+                width: 1308px;
+            }
+
+
+    </style>
     {{ block.super }}
     <script src="{% static "angular/angular.js" %}"></script>
     <script src="{% static "angular/angular-route.js" %}"></script>

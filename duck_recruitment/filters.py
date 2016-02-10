@@ -1,7 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals
 import django_filters
-from duck_recruitment.models import Ec, CCOURS_Individu, EtatHeure, Titulaire, InvitationEc
+from duck_recruitment.models import Ec, CCOURS_Individu, EtatHeure, Titulaire, InvitationEc, TypeEc, HeureForfait, \
+    PropEc
 
 
 class EcFilter(django_filters.FilterSet):
@@ -43,3 +44,27 @@ class InvitationEcFilter(django_filters.FilterSet):
     class Meta:
         model = InvitationEc
         filter_fields = ['ec__code_ec']
+
+
+class TypeEcFilter(django_filters.FilterSet):
+    etape = django_filters.CharFilter(name='etape__pk')
+
+    class Meta:
+        model = TypeEc
+        filter_fields = ['etape']
+
+
+class HeureForfaitFilter(django_filters.FilterSet):
+    etape = django_filters.CharFilter(name='etape__pk')
+
+    class Meta:
+        model = HeureForfait
+        filter_fields = ['etape']
+
+
+class PropEcFilter(django_filters.FilterSet):
+    etape = django_filters.CharFilter(name='ec__etape__pk')
+
+    class Meta:
+        model = PropEc
+        filter_fields = ['ec', 'etape']

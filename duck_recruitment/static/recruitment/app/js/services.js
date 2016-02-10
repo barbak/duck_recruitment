@@ -70,3 +70,28 @@ servicesRecrutement.factory('Invitation', ['$resource', '$http', function($resou
     };
     return {resource: resource, search: search}
 }]);
+
+servicesRecrutement.factory('RecrutementService', ['$resource', '$http', function($resource, $http){
+    var type_ec = {
+        resource:
+            $resource('/recruitment/v1/type_ec/:id',{id:'@id'}, {
+                update: { method: 'PUT', params: {id:'@id'}}
+            })
+
+    };
+    var heure_forfait = {
+        resource:
+            $resource('/recruitment/v1/heure_forfait/:id',{id:'@id'}, {
+                update: { method: 'PUT', params: {id:'@id'}}
+            })
+
+    };
+    var prop_ec = {
+        resource:
+            $resource('/recruitment/v1/prop_ec/:id',{id:'@id'}, {
+                update: { method: 'PUT', params: {id:'@id'}}
+            })
+
+    };
+    return {type_ec: type_ec, heure_forfait:heure_forfait, prop_ec: prop_ec}
+}]);
