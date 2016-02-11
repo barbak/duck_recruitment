@@ -93,12 +93,18 @@
                                            ng-keyup="$event.keyCode == 13 && heure_forfait.$update()">
                                 </div>
                                 <div class="col-sm-2">
-                                    <input type="checkbox" class="form-control" ng-model="heure_forfait.semestriel"
+                                    <div class="checkbox">
+                                        <label >
+                                    <input type="checkbox"  ng-model="heure_forfait.semestriel"
                                            ng-change="heure_forfait.$update()">
+                                            </label>
+                                        </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    <input type="checkbox" class="form-control" ng-model="heure_forfait.proratise"
+                                    <div class="checkbox">
+                                    <input type="checkbox"  ng-model="heure_forfait.proratise"
                                            ng-change="heure_forfait.$update()">
+                                        </div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -110,18 +116,23 @@
                                     <input type="text" class="form-control" ng-model="new_heure_forfait.value">
                                 </div>
                                 <div class="col-sm-2">
-                                    <input type="checkbox" class="form-control" ng-model="new_heure_forfait.semestriel">
+                                    <div class="checkbox">
+                                    <input type="checkbox"  ng-model="new_heure_forfait.semestriel">
+                                        </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    <input type="checkbox" class="form-control" ng-model="new_heure_forfait.proratise">
+                                    <div class="checkbox">
+                                    <input type="checkbox"  ng-model="new_heure_forfait.proratise">
+                                        </div>
+                                </div>
+                                <div class="col-sm-2">
+
+                                    <button class="btn btn-primary"
+                                        ng-click="save_new_heure_forfait(new_heure_forfait, etape)"><span class="glyphicon glyphicon-plus"></span>
+                                </button>
                                 </div>
 
 
-                            </div>
-                            <div class="col-lg-2">
-                                <button class="btn btn-primary"
-                                        ng-click="save_new_heure_forfait(new_heure_forfait, etape)">Ajouter
-                                </button>
                             </div>
                         </div>
                     </div>
