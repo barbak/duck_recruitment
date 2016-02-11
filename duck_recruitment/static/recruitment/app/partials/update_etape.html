@@ -26,40 +26,45 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Type de groupe d'ec</div>
                     <div class="panel-body">
-                        <div class="form-horizontal" novalidate>
-                            <div class="form-group">
-                                <div class=" col-sm-12">
-                                    <label for="inputEmail3" class=" control-label">Titre</label>
+                        <form action="" class="form-horizontal">
+                            <div class="row form-group">
+                                <div class="col-sm-10">
+                                    <label class=" control-label">Titre</label>
                                 </div>
                             </div>
-                            <div class="form-group" ng-repeat="type_ec in types_ec">
+                            <div class="row form-group" ng-repeat="type_ec in types_ec">
 
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control" ng-model="type_ec.label"
-                                           ng-blur="type_ec.$update()"
-                                           ng-keyup="$event.keyCode == 13 && type_ec.$update()">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <input id="new_ec" type="text" class="form-control" ng-model="type_ec.new_label">
-                                </div>
-                                <div class="col-lg-2">
-                                    <button class="btn btn-primary" ng-click="save_new_type_ec(type_ec, etape)"
-                                            ng-keyup="$event.keyCode == 13 && save_new_type_ec(type_ec, etape)">Ajouter
-                                    </button>
-                                </div>
-                            </div>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="text"  ng-model="type_ec.label"
+                                           ng-keyup="$event.keyCode == 13 && update_type_ec(type_ec)">
 
-                        </div>
+
+                                </div>
+                                <div class="col-sm-2">
+                                <button ng-if="user.is_superuser" class="btn btn-danger" ng-click="delete_type_ec(type_ec)"><span class="glyphicon glyphicon-remove"></span></button>
+                                    </div>
+                            </div>
+                            <div  class="row form-group">
+                                <div class="col-lg-10">
+
+                                         <input id="new_ec" type="text" class="form-control" ng-model="type_ec.new_label">
+
+                                </div>
+                                <div class="col-sm-2 ">
+                                <button class="btn btn-primary" ng-click="save_new_type_ec(type_ec, etape)"
+                                        ng-keyup="$event.keyCode == 13 && save_new_type_ec(type_ec, etape)"><span class="glyphicon glyphicon-plus"></span>
+                                </button>
+                                    </div>
+                            </div>
+                        </form>
+
                     </div>
-
                 </div>
             </div>
 
             <div class="col-sm-8">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Type de groupe d'ec</div>
+                    <div class="panel-heading">Forfait</div>
                     <div class="panel-body">
                         <div class="form-horizontal" novalidate>
                             <div class="form-group">
@@ -79,13 +84,12 @@
                             <div class="form-group" ng-repeat="heure_forfait in heures_forfaits ">
 
                                 <div class="col-sm-3">
-                                    <select ng-options="item.id as item.label for item in types_ec"
+                                    <select class="form-control" ng-options="item.id as item.label for item in types_ec"
                                             ng-model="heure_forfait.type_ec"
                                             ng-change="heure_forfait.$update()"></select>
                                 </div>
                                 <div class="col-sm-2">
                                     <input type="text" class="form-control" ng-model="heure_forfait.value"
-                                           ng-blur="heure_forfait.$update()"
                                            ng-keyup="$event.keyCode == 13 && heure_forfait.$update()">
                                 </div>
                                 <div class="col-sm-2">
@@ -99,7 +103,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-3">
-                                    <select ng-options="item.id as item.label for item in types_ec"
+                                    <select class="form-control" ng-options="item.id as item.label for item in types_ec"
                                             ng-model="new_heure_forfait.type_ec"></select>
                                 </div>
                                 <div class="col-sm-2">

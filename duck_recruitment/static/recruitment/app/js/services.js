@@ -16,7 +16,8 @@ servicesRecrutement.factory('Ec', ['$resource', '$http',
     function($resource, $http){
         var resource = function(){
             return $resource('/recruitment/v1/ecs/:ecId', {}, {
-            query: {method: 'GET', params: {ecId: '@ecId'}, isArray: true}
+            query: {method: 'GET', params: {ecId: '@ecId'}, isArray: true},
+                update: { method: 'PUT', params: {ecId:'@id'}}
             });
         };
         var ec_by_etape = function(etape){
@@ -72,6 +73,27 @@ servicesRecrutement.factory('Invitation', ['$resource', '$http', function($resou
 }]);
 
 servicesRecrutement.factory('RecrutementService', ['$resource', '$http', function($resource, $http){
+    var ec = $resource('/recruitment/v2/ecs/:id',{id:'@id'}, {
+        update: { method: 'PUT', params: {id:'@id'}},
+        query_with_type_ec: { method: 'GET', params: {id:'@id'}, isArray:true, interceptor: {
+            response: function(response){
+                var ecs = response.data;
+                var etape = response.config.params.etape;
+                 prop_ec.resource.query({etape: etape}, function(data){
+                    angular.forEach(ecs, function (ec) {
+                     ec.prop_ec = data.find(function (proc_ec) {
+                        if (proc_ec.ec == ec.id) {
+                            return proc_ec;
+                        }
+                        return false;
+                     });
+                     });
+                });
+                return ecs;
+            }
+        }}
+    });
+
     var type_ec = {
         resource:
             $resource('/recruitment/v1/type_ec/:id',{id:'@id'}, {
@@ -93,5 +115,5 @@ servicesRecrutement.factory('RecrutementService', ['$resource', '$http', functio
             })
 
     };
-    return {type_ec: type_ec, heure_forfait:heure_forfait, prop_ec: prop_ec}
+    return {type_ec: type_ec, heure_forfait:heure_forfait, prop_ec: prop_ec, ec: ec}
 }]);

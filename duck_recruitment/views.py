@@ -76,6 +76,10 @@ class EcViewSet(viewsets.ModelViewSet):
     filter_class = EcFilter
 
 
+class EcV2ViewSet(EcViewSet):
+    paginate_by = None
+
+
 class EtapeViewSet(viewsets.ModelViewSet):
     # queryset = EtapeVet.objects.filter(cod_cmp='034')
     serializer_class = EtapeSerializer
