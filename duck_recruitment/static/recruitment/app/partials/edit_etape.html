@@ -37,7 +37,7 @@
             <td>{{ ec.lib_ec }}</td>
             <td><select class="form-control" ng-options="item.id as item.label for item in types_ec"
                                             ng-model="ec.type"
-                                            ng-change="ec.$update()"></select></td>
+                                            ng-change="update_ec(ec)"></select></td>
             <td>
                 <select class="form-control" ng-options="item.choix as item.label for item in choix_prop_ec" ng-model="ec.prop_ec.type" ng-change="ec.prop_ec.$update()"></select>
             </td>

@@ -254,7 +254,7 @@ myApp.controller('EtapesCtrl', ['$scope', 'Etape', '$filter','Ec','$modal', 'Rec
     Etape.query(function(data) {
         $scope.etapes = $filter('filter')(data, {cod_vrs_vet:'5'}, false);
         if($scope.etapes.length >= 1) {
-            $scope.monEtape = $scope.etapes[8];
+            $scope.monEtape = $scope.etapes[0];
 
             $scope.listEc($scope.monEtape);
         }
@@ -267,6 +267,12 @@ myApp.controller('EtapesCtrl', ['$scope', 'Etape', '$filter','Ec','$modal', 'Rec
             $scope.ecs = data;
         });
     };
+        $scope.update_ec= function(ec){
+            var prop_ec = ec.prop_ec;
+            ec.$update(function(){
+               ec.prop_ec = prop_ec;
+            });
+        };
         $scope.$on('updateTypeEc', function(type_ec){
            RecrutementService.type_ec.resource.query({etape:$scope.monEtape.id}, function(data){
                $scope.types_ec = data;

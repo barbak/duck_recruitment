@@ -77,7 +77,7 @@ servicesRecrutement.factory('RecrutementService', ['$resource', '$http', functio
         update: { method: 'PUT', params: {id:'@id'}},
         query_with_type_ec: { method: 'GET', params: {id:'@id'}, isArray:true, interceptor: {
             response: function(response){
-                var ecs = response.data;
+                var ecs = response.resource;
                 var etape = response.config.params.etape;
                  prop_ec.resource.query({etape: etape}, function(data){
                     angular.forEach(ecs, function (ec) {
