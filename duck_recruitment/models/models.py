@@ -1,6 +1,8 @@
 # -*- coding: utf8 -*-
 from __future__ import unicode_literals
 from django.db import models, IntegrityError
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django_apogee.models import Etape
 from duck_recruitment.managers import EcManager
@@ -235,17 +237,69 @@ class AllEcAnnuel(models.Model):
                 for ec in self.etatheure_set.all()]
 
     def __str__(self):
-        return "{} {}".format(self.agent, self.annee)
+        return "{} {}".format(self.agent_id, self.annee)
 
+
+@receiver(post_save)
+def mise_a_jour_cache_etat_heure(sender, instance, **kwargs):
+    if sender == HeureForfait:
+        for etat in EtatHeure.objects.filter(ec__type=instance.type_ec, all_ec_annuel__annee=instance.annee):
+            etat.calcul_forfait()
+    if sender == Ec:
+        for etat in instance.etatheure_set.all():
+            etat.calcul_forfait()
 
 @python_2_unicode_compatible
 class EtatHeure(models.Model):
+    """
+    la classe qui permet de faire le lien entre une ec et un agent de façon annualisé
+    par le bien de all_ec_annuel (qui est le regoupement de tous les ec de la personne pour une année
+    elle doit calculer la proratisation (rattachement), donner le forfait, donner le total du premier semestre
+    decomposer en : la partie du forfait du et le hors forfait si nécessaire (les actes pédagogiques en plus de ceux
+    définis) et la même chose pour le total de l'année.
+    Pour rappel : le rattachement c'est les heures de septembre à décembre
+    le premier semestre c'est ce qui est du pour le premier semestre (rattachement compris)
+    le total annuel c'est ce qui est du à l'année.
+    """
+
     all_ec_annuel = models.ForeignKey(AllEcAnnuel)
     ec = models.ForeignKey(Ec)
     forfaitaire = models.BooleanField(default=True)
     nombre_heure_estime = models.FloatField(null=True, blank=True)
     valider = models.BooleanField(default=False)
     date_creation = models.DateField(auto_now_add=True)
+    _forfait = models.FloatField("cache pour le forfait", null=True, default=None)
+
+    @property
+    def ratachement(self):
+        """
+        la somme du pour la période de septembre à décembre
+        :return: le total du
+        :rtype: float
+        """
+        return 0
+
+    @property
+    def forfait(self):
+        """
+        :return: la valeur du forfait (en heure) de l'état heure
+        :rtype: float
+        """
+        if self._forfait is None:
+            self.calcul_forfait()
+        return self._forfait
+
+    def calcul_forfait(self):
+
+        if not self.forfaitaire:
+            self._forfait = 0
+        try:
+            value = HeureForfait.objects.filter(type_ec=self.ec.type, annee='2015', etape=self.ec.type.etape).values_list('value', flat=True).first()
+            self._forfait = value
+        except AttributeError:
+            self._forfait = None
+        self.save()
+
 
     @property
     def etps(self):
@@ -320,6 +374,7 @@ class SettingsEtapes(Etape):
 
     def __str__(self):
         return ""
+
     class Meta:
         db_table = 'duck_inscription_settingsetape'
         managed = False
@@ -393,6 +448,7 @@ class HeureForfait(models.Model):
     """
     décrit la propriété financière d'un type d'ec pour une étape donnée.
     """
+
     type_ec = models.ForeignKey(TypeEc)  # validée
     etape = models.ForeignKey(EtapeVet)  # validée
     value = models.FloatField()  # validée

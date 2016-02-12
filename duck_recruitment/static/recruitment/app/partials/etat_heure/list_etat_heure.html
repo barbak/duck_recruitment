@@ -29,7 +29,9 @@
                                 <ul>
                                     <li ng-repeat="(key, etape) in etapes">{{ key }}
                                         <ul>
-                                            <li ng-repeat="ec in etape">{{ ec.ec__code_ec }} {{ ec.ec__lib_ec }}</li>
+                                            <li ng-repeat="ec in etape">{{ ec.ec__code_ec }} {{ ec.ec__lib_ec }}
+                                                <span ng-if="ec._forfait" class="text-info  ">forfait : {{ ec._forfait }}</span>
+                                                <span class="text-danger" ng-if="!ec._forfait">Pas de forfait renseigné</span></li>
                                         </ul>
                                     </li>
                                 </ul>

@@ -33,11 +33,13 @@ class AllEcAnnuelSerializer(serializers.ModelSerializer):
     list_ec = serializers.SerializerMethodField()
     type_agent = serializers.SerializerMethodField()
 
+
     def get_info_perso(self, obj):
         return '{} {} {}'.format(obj.agent.last_name, obj.agent.first_name, obj.agent.email.lower())
 
     def get_type_agent(self, obj):
         return '{}'.format(obj.agent.type)
+
 
     def get_list_ec(self, obj):
         """
@@ -46,8 +48,9 @@ class AllEcAnnuelSerializer(serializers.ModelSerializer):
         :return: un dico
         """
         r = {}
-        ecs = obj.etatheure_set.order_by('ec__etape__cod_etp').values('ec__code_ec', 'ec__lib_ec', 'ec__etape__cod_etp')
+        ecs = obj.etatheure_set.order_by('ec__etape__cod_etp').values('ec__code_ec', 'ec__lib_ec', 'ec__etape__cod_etp', '_forfait')
         for ec in ecs:
+
             if ec['ec__etape__cod_etp'] not in r:
                 r[ec['ec__etape__cod_etp']] = [ec]
             else:
@@ -69,9 +72,6 @@ class EtatHeureSerializer(serializers.ModelSerializer):
     info_perso = serializers.SerializerMethodField()
     agent_identity = serializers.SerializerMethodField()
     agent_email = serializers.SerializerMethodField()
-
-
-
 
     def get_info_perso(self, obj):
         return '{} {} {}'.format(obj.all_ec_annuel.agent.last_name, obj.all_ec_annuel.agent.first_name, obj.all_ec_annuel.agent.email.lower())
