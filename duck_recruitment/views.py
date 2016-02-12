@@ -17,7 +17,7 @@ from .models import CCOURS_Individu, Ec, Agent, EtapeVet, EtatHeure, AllEcAnnuel
     InvitationEc, TypeEtatHeure, TypeEc, HeureForfait, PropEc  # , BaseIndividu
 from .serializers import CCOURS_IndividuSerializer, AgentSerializer, EcSerializer, EtapeSerializer, EtatHeureSerializer, \
     AllEcAnnuelSerializer, TitulaireSerializer, InvitationEcSerializer, UserSerializer, TypeEtatHeureSerializer, \
-    TypeEcSerializer, HeureForfaitSerializer, PropEcSerializer
+    TypeEcSerializer, HeureForfaitSerializer, PropEcSerializer, AgentV2Serializer
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -64,6 +64,11 @@ class AgentViewSet(viewsets.ModelViewSet):
     serializer_class = AgentSerializer
 
 
+class AgentV2ViewSet(viewsets.ModelViewSet):
+    queryset = Agent.objects.all()
+    serializer_class = AgentV2Serializer
+
+
 class EcViewSet(viewsets.ModelViewSet):
     """
     permet de récupérer les ec
@@ -81,11 +86,9 @@ class EcV2ViewSet(EcViewSet):
 
 
 class EtapeViewSet(viewsets.ModelViewSet):
-    # queryset = EtapeVet.objects.filter(cod_cmp='034')
     serializer_class = EtapeSerializer
 
     def get_queryset(self):
-        # queryset = super(EtapeViewSet, self).get_queryset()
         user = User.objects.get(username=self.request.user.username)
         queryset = EtapeVet.objects.filter(cod_cmp='034', cod_etp__cod_etp__in=user.settings_user.etapes.values_list('cod_etp', flat=True))
         return queryset
@@ -99,7 +102,7 @@ class EtatHeureViewSet(viewsets.ModelViewSet):
 
 
 class AllEcAnnuelViewSet(viewsets.ModelViewSet):
-    queryset = AllEcAnnuel.objects.all()
+    queryset = AllEcAnnuel.objects.prefetch_related('etatheure_set__ec').all()
     serializer_class = AllEcAnnuelSerializer
 
 

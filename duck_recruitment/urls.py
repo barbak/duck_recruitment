@@ -8,6 +8,7 @@ from django.conf.urls import url, include
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'v1/dsi-individus', views.CCOURS_IndividuViewSet, base_name='dsi')
 router.register(r'v1/agents', views.AgentViewSet, base_name='agents')
+router.register(r'v2/agents', views.AgentV2ViewSet, base_name='agents2')
 router.register(r'v1/ecs', views.EcViewSet, base_name='ecs')
 router.register(r'v2/ecs', views.EcV2ViewSet, base_name='ecs2')
 router.register(r'v1/etapes', views.EtapeViewSet, base_name='etapes')

@@ -5,7 +5,7 @@ from django_apogee.models import Etape
 from rest_framework import serializers
 from .models import CCOURS_Individu, Agent, Ec, EtapeVet, AllEcAnnuel, EtatHeure, Titulaire, InvitationEc, TypeEtatHeure, \
     TypeEc, HeureForfait, PropEc
-
+from django.core import serializers as seria
 
 class CCOURS_IndividuSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
@@ -29,6 +29,38 @@ class TitulaireSerializer(serializers.ModelSerializer):
 
 
 class AllEcAnnuelSerializer(serializers.ModelSerializer):
+    info_perso = serializers.SerializerMethodField()
+    list_ec = serializers.SerializerMethodField()
+    type_agent = serializers.SerializerMethodField()
+
+    def get_info_perso(self, obj):
+        return '{} {} {}'.format(obj.agent.last_name, obj.agent.first_name, obj.agent.email.lower())
+
+    def get_type_agent(self, obj):
+        return '{}'.format(obj.agent.type)
+
+    def get_list_ec(self, obj):
+        """
+        récupére les ec trier par etape, regroupe par diplome
+        :param obj: Ec
+        :return: un dico
+        """
+        r = {}
+        ecs = obj.etatheure_set.order_by('ec__etape__cod_etp').values('ec__code_ec', 'ec__lib_ec', 'ec__etape__cod_etp')
+        for ec in ecs:
+            if ec['ec__etape__cod_etp'] not in r:
+                r[ec['ec__etape__cod_etp']] = [ec]
+            else:
+                r[ec['ec__etape__cod_etp']].append(ec)
+        result = {}
+        for key, etape in r.items():
+            v = key[0] + key[2:]
+            if v not in result:
+                result[v] = {key: etape}
+            else:
+                result[v][key] = etape
+        return result
+
     class Meta:
         model = AllEcAnnuel
 
@@ -37,6 +69,9 @@ class EtatHeureSerializer(serializers.ModelSerializer):
     info_perso = serializers.SerializerMethodField()
     agent_identity = serializers.SerializerMethodField()
     agent_email = serializers.SerializerMethodField()
+
+
+
 
     def get_info_perso(self, obj):
         return '{} {} {}'.format(obj.all_ec_annuel.agent.last_name, obj.all_ec_annuel.agent.first_name, obj.all_ec_annuel.agent.email.lower())
@@ -205,3 +240,29 @@ class PropEcSerializer(serializers.ModelSerializer):
     class Meta:
         model = PropEc
 
+
+class AgentV2Serializer(serializers.ModelSerializer):
+    adresses = serializers.SerializerMethodField()
+
+    def get_adresses(self, obj):
+        result = []
+        adresses = obj.adresses
+        if adresses is None:
+            return ""
+        else:
+            for adresse in adresses:
+             result.append({
+                 'telephone': adresse.tel if not adresse.tel == '0100000000' else "",
+                 'portable': adresse.port if not adresse.port == '0600000000' else "",
+                 'adresse': adresse.adresse,
+                 'adresse_suite': adresse.adresse_suite,
+                 'cp': adresse.cp,
+                 'commune': adresse.commune,
+                 'pays': adresse.pays,
+                 'voie': adresse.voie,
+                 # 'type_adresse': adresse.type_adresse.libelle
+             })
+            return result
+
+    class Meta:
+        model = Agent

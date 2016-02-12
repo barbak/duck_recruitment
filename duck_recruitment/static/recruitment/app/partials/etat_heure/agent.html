@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+            aria-hidden="true">&times;</span></button>
+    <h3 class="modal-title">Modifier une personne</h3>
+</div>
+<div class="modal-body">
+    <div ng-if="message" class="alert alert-{{ message.type }}">{{ message.message }}</div>
+    <div ng-if="errors" class="alert alert-danger">
+        <ul>
+            <li ng-repeat="(key, value) in errors">{{ key }}
+                <ul>
+                    <li ng-repeat="i in value">{{ i }}</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="well">
+        <h3>
+            {{ agent.last_name }} {{ agent.first_name1 }}
+        </h3>
+
+    </div>
+    <div class="well">
+        <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Information personnel</h3>
+              </div>
+              <div class="panel-body">
+                  <ul ng-repeat="adresse in agent.adresses">
+                      <li>Adresse : {{ adresse.adresse }} {{ adresses.voie }}{{ adresse.adresse_suite }}
+                          {{ adresse.cp }} {{ adresse.commune }}</li>
+                      <li>Téléphone portable : {{ adresse.portable }}</li>
+                      <li>Téléphone fixe : {{ adresse.telephone }}</li>
+                  </ul>
+
+              </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+
+        <button class="btn btn-warning" ng-click="$close()"><span class="glyphicon glyphicon-remove"></span> Fermer
+        </button>
+
+    </div>
+</div>

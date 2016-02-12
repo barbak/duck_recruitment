@@ -8,8 +8,6 @@ from django.conf import settings
 from mailrobot.models import Mail
 
 
-
-
 @python_2_unicode_compatible
 class CCOURS_Individu(models.Model):
     id = models.IntegerField(db_column='INDIV_ID', primary_key=True)
@@ -38,6 +36,44 @@ class CCOURS_Individu(models.Model):
     class Meta:
         managed = False
         db_table = 'INDIVIDU'
+        app_label = "duck_recruitment"
+
+
+@python_2_unicode_compatible
+class TypeAdresse(models.Model):
+    id = models.IntegerField(primary_key=True, db_column='TYPA_ID')
+    libelle = models.CharField(max_length=2000, null=True, db_column='TYPA_ADRESSE')
+
+    def __str__(self):
+        return self.libelle
+
+    class Meta:
+        managed = False
+        db_table = 'TYPE_ADRESSE'
+        app_label = "duck_recruitment"
+
+
+@python_2_unicode_compatible
+class AdresseCcours(models.Model):
+    id = models.IntegerField(primary_key=True, db_column='ADR_ID')
+    cp = models.CharField(max_length=5, null=True, blank=True, db_column='ADR_CP')
+    insee = models.CharField(max_length=5, null=True, blank=True, db_column='ADR_INSEE')
+    adresse = models.CharField(max_length=2000, null=True, blank=True, db_column='ADR_ADRESSE')
+    type_adresse = models.ForeignKey(TypeAdresse, null=True, db_column='TYPA_ID')
+    adresse_suite = models.CharField(max_length=2000, null=True, db_column='ADR_ADRESSE_SUITE')
+    commune = models.CharField(max_length=2000, null=True, db_column='ADR_COMMUNE')
+    pays = models.CharField(max_length=3, null=True, db_column='ADR_PAYS')
+    port = models.CharField('telephone portable', max_length=2000, null=True, db_column='ADR_PORT')
+    tel = models.CharField('telephone fixe', max_length=2000, null=True, db_column='ADR_TEL')
+    voie = models.CharField(max_length=50, null=True, db_column='ADR_VOIE')
+    individu = models.ForeignKey(CCOURS_Individu, null=True, db_column='INDIV_ID', related_name='adresses')
+
+    def __str__(self):
+        return self.adresse
+
+    class Meta:
+        managed = False
+        db_table = 'ADRESSE'
         app_label = "duck_recruitment"
 
 
@@ -77,6 +113,13 @@ class Agent(models.Model):
     personal_email = models.EmailField("Email", unique=True, null=True)
     birthday = models.DateField('date de naissance', null=True)
 
+    @property
+    def adresses(self):
+        if self.type == 'tit':
+            return None
+        individu = CCOURS_Individu.objects.using('ccours').get(numero=self.individu_id)
+        return individu.adresses.all()
+
     def __str__(self):
         return "{} {}".format(self.last_name, self.first_name1)
 
@@ -111,6 +154,7 @@ class Agent(models.Model):
         self.first_name1 = ind.prenom
         self.personal_email = ind.mail
         self.birthday = ind.dnaissance
+
 
     @property
     def family_name(self):

@@ -15,6 +15,10 @@ myApp.config(['$routeProvider', '$httpProvider',
                 templateUrl: '/static/recruitment/app/partials/edit_etape.html',
                 controller: 'EtapesCtrl'
             }).
+            when('/etat_heure/', {
+                templateUrl: '/static/recruitment/app/partials/etat_heure/list_etat_heure.html',
+                controller: 'ListEtatHeureCtrl'
+            }).
             otherwise({
                 redirectTo: '/'
             });
