@@ -244,10 +244,15 @@ class AllEcAnnuel(models.Model):
 def mise_a_jour_cache_etat_heure(sender, instance, **kwargs):
     if sender == HeureForfait:
         for etat in EtatHeure.objects.filter(ec__type=instance.type_ec, all_ec_annuel__annee=instance.annee):
-            etat.calcul_forfait()
+            # etat.calcul_forfait()
+            # etat.calcul_ratachement()
+            etat.save()
     if sender == Ec:
         for etat in instance.etatheure_set.all():
-            etat.calcul_forfait()
+            # etat.calcul_forfait()
+            # etat.calcul_ratachement()
+            etat.save()
+
 
 @python_2_unicode_compatible
 class EtatHeure(models.Model):
@@ -265,19 +270,53 @@ class EtatHeure(models.Model):
     all_ec_annuel = models.ForeignKey(AllEcAnnuel)
     ec = models.ForeignKey(Ec)
     forfaitaire = models.BooleanField(default=True)
+    heure_statutaire = models.FloatField(default=0)
     nombre_heure_estime = models.FloatField(null=True, blank=True)
     valider = models.BooleanField(default=False)
     date_creation = models.DateField(auto_now_add=True)
     _forfait = models.FloatField("cache pour le forfait", null=True, default=None)
+    _rattachement = models.FloatField("cache pour le ratachement", null=True, default=None)
 
     @property
-    def ratachement(self):
+    def type_ec(self):
+        return self.ec.propec_set.get(annee=self.all_ec_annuel.annee).type
+
+    @property
+    def rattachement(self):
         """
         la somme du pour la période de septembre à décembre
         :return: le total du
         :rtype: float
         """
-        return 0
+        if self._rattachement is None:
+            self.calcul_rattachement()
+        return self._rattachement
+
+    def calcul_rattachement(self):
+        if not self.forfaitaire:
+            return 0
+        try:
+            if not self.ec.type.heureforfait_set.get(annee=self.all_ec_annuel.annee).proratise:
+                self._rattachement = 0
+            else:
+                type_ec = self.type_ec
+                if type_ec == '0':
+                    coeff = 0.5
+                elif type_ec == '1':
+                    coeff = 1
+                else:
+                    coeff = 0
+                heure_forfait = self.forfait - (self.heure_statutaire or 0)
+                heure_forfait *= coeff
+                if heure_forfait < 0:
+                    heure_forfait = 0
+                self._rattachement = round(heure_forfait / 3.0, 2)
+
+        except (HeureForfait.DoesNotExist, TypeEc.DoesNotExist, AttributeError):
+            self._rattachement =  None
+        except PropEc.MultipleObjectsReturned as e:
+            raise e
+
 
     @property
     def forfait(self):
@@ -298,8 +337,6 @@ class EtatHeure(models.Model):
             self._forfait = value
         except AttributeError:
             self._forfait = None
-        self.save()
-
 
     @property
     def etps(self):
@@ -324,6 +361,9 @@ class EtatHeure(models.Model):
             etat = EtatHeure.objects.get(pk=self.pk)
             if self.valider and not etat.valider:
                 self.envoi_mail_information()
+
+        self.calcul_forfait()
+        self.calcul_rattachement()
         super(EtatHeure, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):

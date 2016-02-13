@@ -40,7 +40,6 @@ class AllEcAnnuelSerializer(serializers.ModelSerializer):
     def get_type_agent(self, obj):
         return '{}'.format(obj.agent.type)
 
-
     def get_list_ec(self, obj):
         """
         récupére les ec trier par etape, regroupe par diplome
@@ -48,7 +47,8 @@ class AllEcAnnuelSerializer(serializers.ModelSerializer):
         :return: un dico
         """
         r = {}
-        ecs = obj.etatheure_set.order_by('ec__etape__cod_etp').values('ec__code_ec', 'ec__lib_ec', 'ec__etape__cod_etp', '_forfait')
+        ecs = obj.etatheure_set.order_by('ec__etape__cod_etp').values('ec__code_ec', 'ec__lib_ec', 'ec__etape__cod_etp',
+                                                                      '_forfait', '_rattachement')
         for ec in ecs:
 
             if ec['ec__etape__cod_etp'] not in r:
