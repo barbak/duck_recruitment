@@ -11,7 +11,7 @@ myApp.config(['$routeProvider', '$httpProvider',
                 templateUrl: '/static/recruitment/app/partials/home.html',
                 controller: 'RecruitmentCtrl'
             }).
-            when('/etapes/', {
+            when('/etapes/:cod_etp?', {
                 templateUrl: '/static/recruitment/app/partials/edit_etape.html',
                 controller: 'EtapesCtrl'
             }).
@@ -31,4 +31,5 @@ myApp.run(['$rootScope', '$http', function($rootScope, $http){
            $rootScope.user = data[0];
        }
     });
+    $rootScope.annee = {annee: 2015}
 }]);

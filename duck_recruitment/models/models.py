@@ -1,5 +1,8 @@
 # -*- coding: utf8 -*-
 from __future__ import unicode_literals
+
+from datetime import date
+
 from django.db import models, IntegrityError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -244,13 +247,9 @@ class AllEcAnnuel(models.Model):
 def mise_a_jour_cache_etat_heure(sender, instance, **kwargs):
     if sender == HeureForfait:
         for etat in EtatHeure.objects.filter(ec__type=instance.type_ec, all_ec_annuel__annee=instance.annee):
-            # etat.calcul_forfait()
-            # etat.calcul_ratachement()
             etat.save()
     if sender == Ec:
         for etat in instance.etatheure_set.all():
-            # etat.calcul_forfait()
-            # etat.calcul_ratachement()
             etat.save()
 
 
@@ -269,10 +268,17 @@ class EtatHeure(models.Model):
 
     all_ec_annuel = models.ForeignKey(AllEcAnnuel)
     ec = models.ForeignKey(Ec)
+    coeff = models.FloatField(null=True, blank=True, default=1)
     forfaitaire = models.BooleanField(default=True)
     heure_statutaire = models.FloatField(default=0)
     nombre_heure_estime = models.FloatField(null=True, blank=True)
-    valider = models.BooleanField(default=False)
+    valider = models.BooleanField("validation du prof", default=False)
+    is_valid_rattrapage = models.BooleanField(verbose_name="Valider la proratisation", default=False)
+    date_validation_rattrapage = models.DateField(null=True)
+    is_valid_premier_semestre = models.BooleanField("Valider l'état du premier semestre", default=False)
+    date_validation_premier_semestre = models.DateField(null=True)
+    is_valid_annuel = models.BooleanField("Valider l'état recapitulatif", default=False)
+    date_validation_annuel = models.DateField(null=True)
     date_creation = models.DateField(auto_now_add=True)
     _forfait = models.FloatField("cache pour le forfait", null=True, default=None)
     _rattachement = models.FloatField("cache pour le ratachement", null=True, default=None)
@@ -294,7 +300,8 @@ class EtatHeure(models.Model):
 
     def calcul_rattachement(self):
         if not self.forfaitaire:
-            return 0
+            self._rattachement = 0
+            return
         try:
             if not self.ec.type.heureforfait_set.get(annee=self.all_ec_annuel.annee).proratise:
                 self._rattachement = 0
@@ -332,8 +339,10 @@ class EtatHeure(models.Model):
 
         if not self.forfaitaire:
             self._forfait = 0
+            return
         try:
             value = HeureForfait.objects.filter(type_ec=self.ec.type, annee='2015', etape=self.ec.type.etape).values_list('value', flat=True).first()
+            value -= self.heure_statutaire
             self._forfait = value
         except AttributeError:
             self._forfait = None
@@ -361,9 +370,12 @@ class EtatHeure(models.Model):
             etat = EtatHeure.objects.get(pk=self.pk)
             if self.valider and not etat.valider:
                 self.envoi_mail_information()
+        if self.is_valid_rattrapage and not self.date_validation_rattrapage:
 
+            self.date_validation_rattrapage = date.today()
         self.calcul_forfait()
         self.calcul_rattachement()
+        print self._forfait
         super(EtatHeure, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):

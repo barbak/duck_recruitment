@@ -27,13 +27,13 @@
                         <ul>
                             <li ng-repeat="(key, etapes) in etat_heure.list_ec">{{ key }}
                                 <ul>
-                                    <li ng-repeat="(key, etape) in etapes">{{ key }}
+                                    <li ng-repeat="(key, etape) in etapes"><a href="#/etapes/{{ key }}">{{ key }}</a>
                                         <ul>
                                             <li ng-repeat="ec in etape">{{ ec.ec__code_ec }} {{ ec.ec__lib_ec }}
-                                                <span ng-if="ec._forfait" class="text-info  ">Forfait : {{ ec._forfait }}</span>
-                                                <span class="text-danger" ng-if="!ec._forfait">Pas de forfait renseigné</span>
-                                                <span ng-if="ec._rattachement" class="text-info  "> Rattachement : {{ ec._rattachement }}</span>
-                                                <span class="text-danger" ng-if="!ec._rattachement"> Pas de forfait renseigné</span>
+                                                <span ng-if="ec._forfait != null" class="text-info  ">Forfait : {{ ec._forfait }}</span>
+                                                <span class="text-danger" ng-if="ec._forfait == null">Pas de forfait renseigné</span>
+                                                <span ng-if="ec._rattachement != null" class="text-info  "> Rattachement : {{ ec._rattachement }}</span>
+                                                <span class="text-danger" ng-if="ec._rattachement == null"> Pas de forfait renseigné</span>
                                             </li>
                                         </ul>
                                     </li>

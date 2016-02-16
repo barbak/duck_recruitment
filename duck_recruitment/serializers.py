@@ -32,6 +32,7 @@ class AllEcAnnuelSerializer(serializers.ModelSerializer):
     info_perso = serializers.SerializerMethodField()
     list_ec = serializers.SerializerMethodField()
     type_agent = serializers.SerializerMethodField()
+    etatheure_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
 
     def get_info_perso(self, obj):
@@ -47,7 +48,7 @@ class AllEcAnnuelSerializer(serializers.ModelSerializer):
         :return: un dico
         """
         r = {}
-        ecs = obj.etatheure_set.order_by('ec__etape__cod_etp').values('ec__code_ec', 'ec__lib_ec', 'ec__etape__cod_etp',
+        ecs = obj.etatheure_set.order_by('ec__etape__cod_etp').values('id', 'ec__code_ec', 'ec__lib_ec', 'ec__etape__cod_etp',
                                                                       '_forfait', '_rattachement')
         for ec in ecs:
 

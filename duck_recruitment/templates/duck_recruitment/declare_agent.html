@@ -26,6 +26,8 @@
 
 
 <div ng-app="myApp">
+
+    <select ng-options="annee for annee in [2015, 2014]" ng-model="annee.annee"></select>
     <div ng-view></div>
 </div>
 

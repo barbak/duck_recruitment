@@ -116,12 +116,16 @@ servicesRecrutement.factory('RecrutementService', ['$resource', '$http', functio
 
     };
     var agent = $resource('/recruitment/v2/agents/:id',{id: '@id'});
+    var etat_heure = $resource('/recruitment/v1/etat_heure/:id',{id: '@id'},{
+                update: { method: 'PUT', params: {id:'@id'}}
+            });
     var all_ec_annuel = $resource('/recruitment/v1/all_ec_annuel',{id:'@id'}, {
                 update: { method: 'PUT', params: {id:'@id'}}
             });
     return {
         type_ec: type_ec,
         heure_forfait:heure_forfait,
+        etat_heure: etat_heure,
         prop_ec: prop_ec,
         ec: ec,
         all_ec_annuel:all_ec_annuel,

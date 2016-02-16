@@ -27,6 +27,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return User.objects.filter(username=self.request.user.username)
 
+
 class DeclareAgentView(TemplateView):
     template_name = "duck_recruitment/declare_agent.html"
     # En faire un adminx.views.Dashboard ???

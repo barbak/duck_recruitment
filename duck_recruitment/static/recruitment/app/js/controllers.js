@@ -243,8 +243,9 @@ myApp.controller('InvitationCtrl',
 
 }]);
 
-myApp.controller('EtapesCtrl', ['$scope', 'Etape', '$filter','Ec','$modal', 'RecrutementService',
-    function($scope, Etape, $filter, Ec, $modal, RecrutementService){
+myApp.controller('EtapesCtrl', ['$scope','$routeParams', 'Etape', '$filter','Ec','$modal', 'RecrutementService',
+    function($scope, $routeParams, Etape, $filter, Ec, $modal, RecrutementService){
+        var cod_etp = $routeParams.cod_etp;
     $scope.monEtape = null;
     $scope.choix_prop_ec = [
         {choix:'0', label: 'Annuel'},
@@ -255,7 +256,18 @@ myApp.controller('EtapesCtrl', ['$scope', 'Etape', '$filter','Ec','$modal', 'Rec
         $scope.etapes = $filter('filter')(data, {cod_vrs_vet:'5'}, false);
         if($scope.etapes.length >= 1) {
             $scope.monEtape = $scope.etapes[0];
-
+            if (!cod_etp) {
+                $scope.monEtape = $scope.etapes[0];
+            }
+            else{
+                etape = $scope.etapes.find(function(element){
+                   if (element.cod_etp == cod_etp){
+                       return element;
+                   }
+                    return false;
+                });
+                $scope.monEtape = etape || $scope.etapes[0];
+            }
             $scope.listEc($scope.monEtape);
         }
     });
@@ -316,13 +328,7 @@ myApp.controller('ModifyEtapeCtrl', ['$rootScope','$scope', 'etape','Etape', 'Re
                 RecrutementService.type_ec.resource.query({etape: etape.id}, function(data){
                     $scope.types_ec = data;
 
-            });
-
-            });
-
-
-        })
-    };
+            });});})};
 
     $scope.save_new_type_ec = function(new_type_ec, etape){
         var ressource = RecrutementService.type_ec.resource;
