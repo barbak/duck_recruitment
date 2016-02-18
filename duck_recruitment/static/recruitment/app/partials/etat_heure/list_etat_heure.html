@@ -28,8 +28,8 @@
                             <span class="glyphicon glyphicon-user"></span> 
                          </button>
                         <br> Validation du directeur :
-                        <span ng-class="{'glyphicon glyphicon-ok text-success': all_ec_annuel.validation_recrutement_directeur,
-                                               'glyphicon glyphicon-remove text-danger': !all_ec_annuel.validation_recrutement_directeur}"></span>
+                        <span ng-class="{'glyphicon glyphicon-ok text-success': etat_heure.validation_recrutement_directeur,
+                                               'glyphicon glyphicon-remove text-danger': !etat_heure.validation_recrutement_directeur}"></span>
 
                         <a href="/recruitment/v1/impression_etat_heure/{{ etat_heure.id }}">Impression</a>
                     </td>
