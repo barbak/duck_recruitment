@@ -1,0 +1,12 @@
+{% extends "base_backoffice.html" %}
+{% load floppyforms %}
+{% block title%}Impression des etats heures deuxieme semestre{% endblock %}
+{% block contenu %}
+    <form id="form" class=" form-horizontal well" method="post" novalidate="novalidate">{% csrf_token %}
+        {% form form %}
+        <div class="form-actions">
+            <input id="submit-id-verifier" class="btn btn-primary btn btn-success" type="submit" value="Imprimer"
+               name="imprimer">
+        </div>
+    </form>
+{% endblock %}

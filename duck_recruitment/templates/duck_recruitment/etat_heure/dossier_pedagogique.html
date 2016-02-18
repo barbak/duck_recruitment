@@ -1,0 +1,191 @@
+{% load lib_pal %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static "bootstrapm/css/bootstrap.css" %}">
+    <script src="{% static "bootstrapm/js/bootstrap.js" %}"></script>
+    <style type="text/css">
+        @font-face {
+            font-family: "code_bare";
+            src: url("{% static "font/ConnectCode39.ttf" %}");
+        }
+        body{
+            font-size: 10pt;
+        }
+        .code_barre {
+            font-family: "code_bare";
+            font-size: 18pt;
+        }
+        .signature {
+            zoom: 15%;
+        }
+
+        .signature2 {
+            zoom: 25%;
+        }
+
+        .favorable {
+            color: green;
+        }
+
+        .attente {
+            color: darkgray;
+        }
+
+        .defavorable {
+            color: darkred;;
+        }
+
+        .label-codbarre {
+
+            margin-top: 10px;
+        }
+
+        .petit {
+            zoom: 30%;
+        }
+    </style>
+</head>
+<body class="">
+<div class="row" name="top-of-the-paper">
+    <div class="col-xs-4">
+        <img class="petit" src="{% static "images/logop8.jpg" %}">
+    </div>
+    <div class="col-xs-4  text-center">
+        <h5>Dossier de Candidature<br>
+            {{ meta_status }} <br>
+            Anneé universitaire {% annee_en_cour %}
+        </h5>
+    </div>
+    <div class="col-xs-4 text-center">
+        <span class="code_barre text-center">*{{ personne.numero_candidature }}*</span> <br>
+
+        <p class="label-codbarre text-center">{{ personne.numero_candidature }}</p>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        DOSSIER PEDAGOGIQUE: Discipline {{ candidature_pedagogique.discipline }}
+    </div>
+    <div class="panel-body">
+        <p class="smaller"><b>Institut d'Etudes a Distance Paris8 </b></p>
+
+        <p class="smaller">Intitulé(s) de l'enseignement:<br>
+            {% for cand in candidature_pedagogique.candidature_set.all %}
+                <i class="small">{{ cand.ec.lib_ec }}</i> ;
+            {% endfor %}
+        </p>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">IDENTITÉ</div>
+    <div class="panel-body">
+        <p class="smaller">
+            {% if personne.sex == 'F' %}
+                Madame
+            {% else %}
+                Monsieur
+            {% endif %}
+            <br>Nom de naissance:
+            <b>{{ personne.last_name|upper|default_if_none:'<span class="label label-warning">Anomalie</span>' }}</b>
+            {% if personne.common_name %}
+                <br>Nom marital:
+                <b> {{ personne.common_name|upper|default_if_none:'<span class="label label-warning">Anomalie</span>' }}</b>
+            {% endif %}
+            <br>Prénom:
+            <b>{{ personne.first_name1|upper }} {{ personne.first_name2|upper|default_if_none:'<span class="label label-warning">Anomalie</span>' }}
+                {{ personne.first_name3|upper|default_if_none:'<span class="label label-warning">Anomalie</span>' }} </b>
+
+            <br>Tel:
+            <b>{{ adresse.listed_number|default_if_none:'<span class="label label-warning">Anomalie</span>' }}</b>
+            <br>Email:
+            <b>{{ personne.personal_email|default_if_none:'<span class="label label-warning">Anomalie</span>' }}</b>
+        </p>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        VISA DU DIRECTEUR DE l'INSTITUT (
+        {% if candidature_pedagogique.visa_directeur == null %}
+            <span class="attente">ATTENTE DECISION</span>
+        {% elif candidature_pedagogique.visa_directeur == True %}
+            <span class="favorable">FAVORABLE</span>
+        {% elif candidature_pedagogique.visa_directeur == False %}
+            <span class="defavorable">DEFAVORABLE</span>
+        {% endif %}
+        )
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-6">
+                <p class="smaller"> Directeur :<b> Gilles Bernard </b></p>
+
+                <p class="smaller">Date: {{ candidature_pedagogique.date_visa_directeur }}</p>
+
+                <p class="smaller">Signature:</p>
+
+            </div>
+            <div class="col-xs-6">
+                {% if candidature_pedagogique.visa_directeur != null %}
+                    <img class="signature" src="{{ url_image }}">
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        VISA DU COMITÉ CONSULTATIF: valable 3 ans (
+        {% if candidature_pedagogique.comite_consultativ == null %}
+                    <span class="attente">ATTENTE DECISION</span>
+                {% elif candidature_pedagogique.comite_consultativ == True %}
+                    <span class="favorable">FAVORABLE</span>
+                {% elif candidature_pedagogique.comite_consultativ == False %}
+                    <span class="defavorable">DEFAVORABLE</span>
+                {% endif %}
+        )
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-6">
+                <p class="smaller"> Nom et Prénom du Président :<b>{{p_comite_consultatif.first_name}} {{ p_comite_consultatif.last_name }}</b>
+                </p>
+                <p class="smaller">Date: {{ candidature_pedagogique.date_comite }}</p>
+                <p class="smaller">Signature:</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        VISA DU CONSEIL ACADÉMIQUE: valable 3 ans (
+        {% if candidature_pedagogique.conseil_scientifiqe == null %}
+                    <span class="attente">ATTENTE DECISION</span>
+                {% elif candidature_pedagogique.conseil_scientifiqe == True %}
+                    <span class="favorable">FAVORABLE</span>
+                {% elif candidature_pedagogique.conseil_scientifiqe == False %}
+                    <span class="defavorable">DEFAVORABLE</span>
+                {% endif %}
+        )
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-6">
+                <p class="smaller"> Nom et Prénom du Président :<b> {{ p_conseil_academique.first_name }} {{ p_conseil_academique.last_name }}</b></p>
+                <p class="smaller">Date: {{ candidature_pedagogique.date_conseil }}</p>
+                <p class="smaller">Signature:</p>
+            </div>
+            <div class="col-xs-6">
+                {% if candidature_pedagogique.conseil_scientifiqe != null %}
+                    <img class="signature2" src="{{ bara_signature }}">
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

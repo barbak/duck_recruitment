@@ -1,0 +1,118 @@
+{% with detail_etat_heure.personne as individu %}
+    <div class="container">
+     <div class="panel panel-default small">
+        <div class="row">
+            <div class="col-xs-4">UNIVERSITÉ PARIS 8 <br/>TRAITEMENT DES CHARGÉS DE COURS</div>
+            <div class="col-xs-4"><span class="code_barre">*{{ detail_etat_heure.code_barre_s1 }}*</span><br/>
+
+            <span class="label_code_barre center-block text-center">{{ detail_etat_heure.code_barre_s1 }}</span></div>
+            <div class="col-xs-4">Annee universitaire {{ detail_etat_heure.annee }}
+            / {{ detail_etat_heure.annee|add:1 }}<br>
+            UFR/Institut : IED<br>
+            Diplome : <br>
+            {% for grade in detail_etat_heure.grades_etat_heure_semestre1 %}
+                {{ grade }} <br>
+            {% endfor %}</div>
+        </div>
+
+     </div>
+
+     <div class="text-center center-block small">
+            <h5>Heures complémentaires 1er semestre (période de janvier à juin) de l'année universitaire {{ detail_etat_heure.annee }}
+                / {{ detail_etat_heure.annee|add:1 }}
+            </h5>
+
+            <h3>{% if individu.categorie.master_categorie.code_categorie == 'TIT' %}
+                <strong>Etat 1</strong>
+            {% else %}
+                <strong>Etat 2</strong>
+            {% endif %}
+            </h3>
+        </div>
+    </div>
+
+ <div class="container">
+    <table class="table table-bordered border small">
+        <tr>
+            <td class="width"><b>Nom : {{ individu.last_name }} <br>
+                    Prénom : {{ individu.first_name1 }} <br>
+                    {% if individu.categorie.master_categorie.code_categorie == 'TIT' %}
+                    Grade d'enseignement : {{individu.categorie}}
+                    {% endif %}
+                </b></td>
+            <td>Date de réception <br>au service traitement :<br><br> Statut :</td>
+        </tr>
+        <tr>
+            <td>Numero de l'EC et intitulé</td>
+            <td>Nombre d'heures complémentaires à remunérer</td>
+        </tr>
+        <tr class="height">
+            <td>
+            {% with detail_etat_heure.liste_semestre_1_valide as etats_heures %}
+                {% for etat_heure in etats_heures %}
+                {{ etat_heure.recap}} <br><br>
+                    {% if   etat_heure.forfait_semestre1 > 0 and etat_heure.total_semestre1 > 0%}
+                        <br>
+                    {% endif %}
+                {% endfor %}
+            {% endwith %}
+            </td>
+            <td>
+            {% with detail_etat_heure.liste_semestre_1_valide as etats_heures %}
+               {% for etat_heure in etats_heures %}
+                   {% if etat_heure.forfait_semestre1 > 0 %}
+                        Forfait
+                  <span class="pull-right"> {{ etat_heure.forfait_semestre1|floatformat:0}}</span>
+                   {% endif %}
+                   <br>{% if  etat_heure.hors_forfait_semestre1 > 0%}
+                        Hors forfait  <span class="pull-right"> {{ etat_heure.hors_forfait_semestre1|floatformat:-2  }}</span>
+                         <br>
+                    {% endif %}
+                    <br>
+                  {% endfor %}
+            {% endwith %}
+            </td>
+        </tr>
+    </table>
+    <table class="table table-bordered border small">
+        <tr>
+            <td>Total :</td> <td><span class="pull-right"> {{ detail_etat_heure.total_semestre1|floatformat:-2 }}</span></td></tr>
+            <tr>
+             <td class="width">Déjà payé :</td>
+             <td><span class="pull-right">{{ detail_etat_heure.somme_proratisation_valider|default_if_none:"0"|floatformat:-2  }}</span></td>
+         </tr>
+        <tr>
+            <td>Reste à rémunérer sur la ligne 920 IED 200 000 30 :</td>
+            <td><span class="pull-right"> {{ detail_etat_heure.semestre1|floatformat:-2 }}</span></td>
+        </tr>
+
+    </table>
+
+        <div class="small">
+        {% if individu.categorie.master_categorie.code_categorie == 'TIT' %}
+
+            <p> Je soussigné, Gilles BERNARD, Directeur de l'I.E.D de l'Université Paris 8, certifie,
+                sous ma responsabilité, que les heures statutaires et les heures complémentaires ont été réellement
+                effectuées. De plus, je certifie que les heures complémentaires ont été effectuées dans la même
+                discipline
+                que les heures statutaires.</p>
+        {% else %}
+            <p> Je soussigné, Gilles BERNARD, Directeur de l'I.E.D de l'Université Paris 8, certifie,
+                sous ma responsabilité, que les heures complémentaires ont été réellement effectuées.</p>
+        {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-xs-6"><span class="pull-left"><b>Date de validation : </b> {{ detail_etat_heure.valide_etat_premier_semestre|date:"d/m/Y" }}</span></div>
+            <div class="col-xs-6"><span class="pull-right"><b>Date d'édition : </b> {% now "d/m/Y" %}</span><br><br></div>
+        </div>
+         <div class="row">
+             <div class="col-xs-6"><span class="pull-left"><b>Signature:</b></span></div>
+             <div class="col-xs-6">
+                 {% if detail_etat_heure.valide_etat_premier_semestre %}
+                    <img class="signature pull-right" src="{{ url_image }}">
+                {% endif %}
+             </div>
+         </div>
+
+</div>
+{% endwith %}

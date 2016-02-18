@@ -1,0 +1,46 @@
+{% load static %}
+<head>
+    <meta charset="utf-8">
+<link rel="stylesheet" href="{% static "bootstrapm/css/bootstrap.css" %}">
+    <script src="{% static "bootstrapm/js/bootstrap.js" %}"></script>
+    <style type="text/css">
+        body{
+            font-size: 11pt;
+        }
+        @font-face {
+            font-family: "code_bare";
+            src: url({{ url_font }});
+        }
+
+        .code_barre {
+            font-family: "code_bare";
+            font-size: 16pt;
+        }
+
+        .label_code_barre {
+            margin-top: 10px;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            font-size: 14pt;
+        }
+
+        .signature {
+            zoom: 30%;
+        }
+
+        .center {
+            text-align: center;
+            margin: 5px;
+        }
+
+        .width {
+            width: 65%;
+        }
+
+        .height {
+            height: 300px;
+        }
+
+
+    </style>
+</head>

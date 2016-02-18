@@ -1,0 +1,175 @@
+{% load lib_pal %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+    <style type="text/css">
+         @font-face {
+            font-family: "code_bare";
+            src: url({{ url_font }});
+        }
+        .code_barre{
+            font-family: "code_bare";
+            font-size: 18pt;
+        }
+        .signature{
+            zoom: 25%;
+        }
+        .label-codbarre{
+
+            margin-top:10px;
+        }
+        .smaller{
+            font-size: 8px;
+        }
+        .quart{
+            width: 25%;
+        }
+
+        .petit{
+            zoom: 30%;
+            margin-bottom: 25px;
+        }
+        .tres-petit{
+            zoom: 10%;
+        }
+        .center{
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .center-div{
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .border{
+            border: 1px solid black;
+        }
+
+        .width{
+            width: 65%;
+        }
+        .height {
+            height: 550px;
+        }
+        .table-bordered th, .table-bordered td {
+            border-left: 1px solid #000000;
+        }
+        .tabbed{
+            text-indent: 5em;
+        }
+
+        .table th, .table td {
+            border-top: 1px solid #000000;
+            line-height: 20px;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .table-bordered {
+            -moz-border-bottom-colors: none;
+            -moz-border-left-colors: none;
+            -moz-border-right-colors: none;
+            -moz-border-top-colors: none;
+            border-collapse: separate;
+            border-color:#000000 #000000 #000000 -moz-use-text-color;
+            border-image: none;
+            border-radius: 4px 4px 4px 4px;
+            border-style: solid solid solid none;
+            border-width: 1px 1px 1px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container clearfix">
+    <div class="pull-left petit">
+                <img src="{{ logo_p8 }}">
+
+    </div>
+    <div class ="pull-right center">
+                <span class="code_barre">*{{ personne.numero_candidature }}*</span> <br>
+                <p class="label-codbarre"><strong>Nr Candidature: {{ personne.numero_candidature }}</strong></p>
+    </div>
+</div>
+<div class="container clearfix">
+    <div class="well">
+        <div class="center">
+            <h5>Dossier de Candidature<br>
+                {{ meta_status}} <br>
+                Décret nr 87-889 du 29 octobre 1987 <br>
+                Anneé universitaire {% annee_en_cour %} <br>
+
+            </h5>
+        </div>
+    </div>
+    <div class="well">
+        <div class="well">
+            <h5>Dossier Administratif Principal de l'UFR</h5>
+        </div>
+        <div class="well-small">
+            {% if personne.sex == 'F' %}
+                <p class="smaller">Je sousignée Madame</p>
+            {% else %}
+                <p class="smaller">Je sousigné  Monsieur</p>
+            {% endif %}
+            <p class="smaller">Nom de naissance: <b>{{ personne.last_name|upper|default_if_none:'<span class="label label-warning">Anomalie</span>'  }}</b></p>
+            {% if personne.common_name  %}
+            <p class="smaller">Nom marital: <b> {{ personne.common_name|upper|default_if_none:'<span class="label label-warning">Anomalie</span>' }}</b></p>
+            {% endif %}
+            <p class="smaller">Prénom: <b>{{ personne.first_name1|upper }} {{ personne.first_name2|upper|default_if_none:'<span class="label label-warning">Anomalie</span>'  }}
+                {{ personne.first_name3|upper|default_if_none:'<span class="label label-warning">Anomalie</span>'  }} </b></p>
+            <p class="smaller">Situation de famille:  <b>{{ civilite }} </b>
+                Date de naissance: <b> {{ personne.birthday }}</b>    </p>
+            <p class="smaller">Nationalité:  <b> {{ personne.nationalite|default_if_none:'<span class="label label-warning">Anomalie</span>' }}</b>  Lieu de naissance: Ville :
+                <b> {{ personne.town_birth }}</b> Pays: <b> {{ personne.code_pays_birth|default_if_none:'<span class="label label-warning">Anomalie</span>'  }}</b></p>
+            <p class="smaller"></p>
+            </p>
+            <p class="smaller">Numero de Sécurité sociale:<b>  {{ personne.numero_secu |default_if_none:'<span class="label label-warning">Anomalie</span>' }}</b></p>
+            <p class="smaller">Adresse:<b> {{ adresse.label_adr_1 |default_if_none:'<span class="label label-warning">Anomalie</span>' }}  {{ adresse.label_adr_2 }}   {{ adresse.label_adr_3 }}  </b> </p>
+            <p class="smaller"> Pays:  <b>{{ adresse.code_pays.lib_pay|default_if_none:'<span class="label label-warning">Anomalie</span>'  }} </b> Ville: <b>{{ adresse.com_bdi.ll_com|default_if_none:'<span class="label label-warning">Anomalie</span>'  }} </b>  Code Postal:
+                <b>{{ adresse.com_bdi.c_postal|default_if_none:'<span class="label label-warning">Anomalie</span>'  }}</b> </p>
+            <p class="smaller"> Tel:  <b>{{ adresse.listed_number|default_if_none:'<span class="label label-warning">Anomalie</span>'  }}</b> Email: <b>{{ personne.personal_email|default_if_none:'<span class="label label-warning">Anomalie</span>'  }}</b></p>
+        </div>
+        <div class="well-small">
+           <p class="smaller"><b>Déclare adresser ma candidature sous le statut de:</b></p>
+           <p class="smaller text-center"> {{ personne.candidatureadministrative.status.meta_status|default_if_none:'<span class="label label-warning">Anomalie</span>'  }}</p>
+           <p class="smaller text-center"> {{ personne.candidatureadministrative.status|default_if_none:'<span class="label label-warning">Anomalie</span>'  }}</p>
+           <p class="smaller"><b> A l'Institut d'Etudes a Distance Paris8</b> </p>
+           <p class="smaller">Formation:....................................................... </p>
+           <p class="smaller">Date de début des cours :......................................... </p>
+           <p class="smaller">Pour un horaire a titre indicatif de : </p>
+           <p class="tabbed smaller"> .....................heures de cours au 1 er semestre</p>
+           <p class="tabbed smaller"> .....................heures de cours au 2 er semestre</p>
+
+
+        </div>
+    </div>
+    <div class="container row ">
+        <div class=" col-xs-6 col-md-4">
+            <p class="smaller"> <b> Signature du postulant: </b></p>
+            <p class="smaller">Date: {% now "d/m/Y" %}</p>
+
+         </div>
+         <div class=" col-xs-6 col-md-4">
+            <p class="smaller"> <b>Visa du directeur de l'IED:</b></p>
+            <p class="smaller">Gilles Bernard</p>
+            <p class="smaller">Date d'édition: {% now "d/m/Y" %}</p>
+
+         </div>
+
+        <div class=" col-xs-6 col-md-4 clearfix">
+            <p class="smaller"> <b>Visa du service du personnel charges de cours:</b></p>
+            <p class="smaller">Nom et Prenom:.....................</p>
+            <p class="smaller">Date: {% now "d/m/Y" %}</p>
+            <p class="smaller">Signature:</p>
+
+         </div>
+
+
+    </div>
+</div>
+</body>
+</html>

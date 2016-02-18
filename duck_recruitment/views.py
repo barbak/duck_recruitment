@@ -260,3 +260,17 @@ class PropEcViewset(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = PropEcFilter
 
+
+class EtatHeurePdfView(View):
+
+    def get_etat_heure(self):
+        self.all_ec_annell = AllEcAnnuel.objects.get(pk=self.kwargs.get('pk'))
+
+    def get(self, request, *args, **kwargs):
+        self.get_etat_heure()
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename=%s_%s.pdf' % ('ezr', 'erzer')
+
+        # response.write(getattr(wish, self.fonction_impression)(request=self.request, context=context))
+        return response

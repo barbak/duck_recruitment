@@ -73,6 +73,10 @@ class EtatHeureSerializer(serializers.ModelSerializer):
     info_perso = serializers.SerializerMethodField()
     agent_identity = serializers.SerializerMethodField()
     agent_email = serializers.SerializerMethodField()
+    detail_forfait = serializers.SerializerMethodField()
+
+    def get_detail_forfait(self, obj):
+        return obj.detail_forfait()
 
     def get_info_perso(self, obj):
         return '{} {} {}'.format(obj.all_ec_annuel.agent.last_name, obj.all_ec_annuel.agent.first_name, obj.all_ec_annuel.agent.email.lower())

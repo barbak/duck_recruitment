@@ -26,6 +26,7 @@ router.register(r'v1/prop_ec', views.PropEcViewset, base_name='prop_ec')
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^v1/confirme_invitation$', views.ConfirmeInvitation.as_view(), name='confirme_invitation'),
+    url(r'^v1/impression_etat_heure/(?P<pk>\d+)/$', views.EtatHeurePdfView.as_view(), name='impression_etat_heure'),
     url(r'^confirme_invitation/(?P<pk>\d+)/$', TemplateView.as_view(template_name='confirmation_invitation.html')),
     url(r'^v1/summary', views.SummaryView.as_view()),
 

@@ -251,6 +251,9 @@ def mise_a_jour_cache_etat_heure(sender, instance, **kwargs):
     if sender == Ec:
         for etat in instance.etatheure_set.all():
             etat.save()
+    if sender == PropEc:
+        for etat in instance.ec.etatheure_set.all():
+            etat.save()
 
 
 @python_2_unicode_compatible
@@ -282,10 +285,29 @@ class EtatHeure(models.Model):
     date_creation = models.DateField(auto_now_add=True)
     _forfait = models.FloatField("cache pour le forfait", null=True, default=None)
     _rattachement = models.FloatField("cache pour le ratachement", null=True, default=None)
+    _type_ec = models.CharField("cache pour le type de l'ec", max_length=1, null=True)
 
     @property
     def type_ec(self):
-        return self.ec.propec_set.get(annee=self.all_ec_annuel.annee).type
+        if not self._type_ec:
+            self.save()
+        return self._type_ec
+
+    def calcul_type_ec(self):
+        self._type_ec = self.ec.propec_set.get(annee=self.all_ec_annuel.annee).type
+
+    def detail_forfait(self):
+        # key coef : le type de l'ec : premier semestre, annuel, second semestre (voir prop_ec)
+        coef = {'0': (0.5, 0.5), '1': (1, 0), '2': (0, 2)}
+        try:
+            result = {
+                'premier_semestre': coef[self.type_ec][0] * self._forfait,
+                'deuxieme_semestre': coef[self.type_ec][1] * self._forfait,
+                'total': self._forfait
+            }
+        except TypeError:
+            return None
+        return result
 
     @property
     def rattachement(self):
@@ -295,7 +317,7 @@ class EtatHeure(models.Model):
         :rtype: float
         """
         if self._rattachement is None:
-            self.calcul_rattachement()
+            self.save()
         return self._rattachement
 
     def calcul_rattachement(self):
@@ -324,7 +346,6 @@ class EtatHeure(models.Model):
         except PropEc.MultipleObjectsReturned as e:
             raise e
 
-
     @property
     def forfait(self):
         """
@@ -332,7 +353,7 @@ class EtatHeure(models.Model):
         :rtype: float
         """
         if self._forfait is None:
-            self.calcul_forfait()
+            self.save()
         return self._forfait
 
     def calcul_forfait(self):
@@ -344,7 +365,7 @@ class EtatHeure(models.Model):
             value = HeureForfait.objects.filter(type_ec=self.ec.type, annee='2015', etape=self.ec.type.etape).values_list('value', flat=True).first()
             value -= self.heure_statutaire
             self._forfait = value
-        except AttributeError:
+        except (AttributeError, TypeError):
             self._forfait = None
 
     @property
@@ -373,9 +394,10 @@ class EtatHeure(models.Model):
         if self.is_valid_rattrapage and not self.date_validation_rattrapage:
 
             self.date_validation_rattrapage = date.today()
+        self.calcul_type_ec()
         self.calcul_forfait()
         self.calcul_rattachement()
-        print self._forfait
+
         super(EtatHeure, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):

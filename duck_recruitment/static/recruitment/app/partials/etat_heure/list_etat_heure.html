@@ -22,7 +22,12 @@
         <div class="panel-body">
             <table class="table table-bordered table-striped">
                 <tr ng-repeat="etat_heure in all_etats_heures | filter:search">
-                    <td>info : {{ etat_heure.info_perso }} type : {{ etat_heure.type_agent }} <button class="btn btn-primary" ng-click="info_agent(etat_heure)"><span class="glyphicon glyphicon-user"></span></button></td>
+                    <td>info : {{ etat_heure.info_perso }} type : {{ etat_heure.type_agent }} 
+                        <button class="btn btn-primary" ng-click="info_agent(etat_heure)">
+                            <span class="glyphicon glyphicon-user"></span> 
+                        </button>
+                        <a href="/recruitment/v1/impression_etat_heure/{{ etat_heure.id }}">Impression</a>
+                    </td>
                     <td>
                         <ul>
                             <li ng-repeat="(key, etapes) in etat_heure.list_ec">{{ key }}
