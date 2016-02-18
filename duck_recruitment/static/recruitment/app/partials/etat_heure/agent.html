@@ -32,6 +32,19 @@
                       <li>Téléphone portable : {{ adresse.portable }}</li>
                       <li>Téléphone fixe : {{ adresse.telephone }}</li>
                   </ul>
+                  <table class="table table-bordered">
+                      <tr>
+                          <td>Validation directeur
+                              <label ng-if="user.is_superuser" ng-class="{'text-danger': !all_ec_annuel.validation_recrutement_directeur, 'text-success': all_ec_annuel.validation_recrutement_directeur}">
+                                  <input type="checkbox"  ng-model="all_ec_annuel.validation_recrutement_directeur">
+                              </label>
+                              <span ng-class="{'glyphicon glyphicon-ok text-success': all_ec_annuel.validation_recrutement_directeur,
+                                               'glyphicon glyphicon-remove text-danger': !all_ec_annuel.validation_recrutement_directeur}"
+                                    ng-if="!user.is_superuser"></span>
+                          </td>
+                          <td><a ng-if="user.is_superuser" class="btn btn-primary" ng-click="all_ec_annuel.$update()">Enregistrer</a></td>
+                      </tr>
+                  </table>
 
               </div>
         </div>

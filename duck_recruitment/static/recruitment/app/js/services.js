@@ -119,7 +119,7 @@ servicesRecrutement.factory('RecrutementService', ['$resource', '$http', functio
     var etat_heure = $resource('/recruitment/v1/etat_heure/:id',{id: '@id'},{
                 update: { method: 'PUT', params: {id:'@id'}}
             });
-    var all_ec_annuel = $resource('/recruitment/v1/all_ec_annuel',{id:'@id'}, {
+    var all_ec_annuel = $resource('/recruitment/v1/all_ec_annuel/:id',{id:'@id'}, {
                 update: { method: 'PUT', params: {id:'@id'}}
             });
     return {

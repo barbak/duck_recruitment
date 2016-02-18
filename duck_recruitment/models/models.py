@@ -234,6 +234,7 @@ class AllEcAnnuel(models.Model):
     agent = models.ForeignKey(Agent)
     annee = models.CharField(max_length=4, default='2015')
     date_creation = models.DateField(auto_now_add=True)
+    validation_recrutement_directeur = models.BooleanField(default=False)
 
     def all_ec_lib(self):
         return ['{} {} {}'.format(ec.ec.code_ec, ec.ec.lib_ec.encode("ascii", "ignore"), ec.etps)
