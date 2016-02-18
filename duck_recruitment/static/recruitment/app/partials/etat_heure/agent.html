@@ -42,7 +42,7 @@
                                                'glyphicon glyphicon-remove text-danger': !all_ec_annuel.validation_recrutement_directeur}"
                                     ng-if="!user.is_superuser"></span>
                           </td>
-                          <td><a ng-if="user.is_superuser" class="btn btn-primary" ng-click="all_ec_annuel.$update()">Enregistrer</a></td>
+                          <td><a ng-if="user.is_superuser" class="btn btn-primary" ng-click="all_ec_annuel_udpdate(all_ec_annuel)">Enregistrer</a></td>
                       </tr>
                   </table>
 

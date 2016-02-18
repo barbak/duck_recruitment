@@ -42,5 +42,12 @@ myApp.controller('AgentCtrl', ['$rootScope', '$scope','all_ec_annuel', 'Etape', 
             id.date_validation_rattrapage=null;
             id.$update();
         };
+        $scope.all_ec_annuel_udpdate = function(all_ec_annuel){
+            var list_ec = all_ec_annuel.list_ec;
+            all_ec_annuel.$update(function(data){
+                data.list_ec = list_ec;
+                all_ec_annuel = data;
+            })
+        };
 
 }]);
