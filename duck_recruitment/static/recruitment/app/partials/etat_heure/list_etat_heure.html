@@ -22,10 +22,15 @@
         <div class="panel-body">
             <table class="table table-bordered table-striped">
                 <tr ng-repeat="etat_heure in all_etats_heures | filter:search">
-                    <td>info : {{ etat_heure.info_perso }} type : {{ etat_heure.type_agent }} 
+                    <td>info : {{ etat_heure.info_perso }} type : {{ etat_heure.type_agent }}
+
                         <button class="btn btn-primary" ng-click="info_agent(etat_heure)">
                             <span class="glyphicon glyphicon-user"></span> 
-                        </button>
+                         </button>
+                        <br> Validation du directeur :
+                        <span ng-class="{'glyphicon glyphicon-ok text-success': all_ec_annuel.validation_recrutement_directeur,
+                                               'glyphicon glyphicon-remove text-danger': !all_ec_annuel.validation_recrutement_directeur}"></span>
+
                         <a href="/recruitment/v1/impression_etat_heure/{{ etat_heure.id }}">Impression</a>
                     </td>
                     <td>
