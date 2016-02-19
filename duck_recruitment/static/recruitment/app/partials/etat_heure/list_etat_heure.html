@@ -29,24 +29,22 @@
                          </button>
                         <br> Validation du directeur :
                         <span ng-class="{'glyphicon glyphicon-ok text-success': etat_heure.validation_recrutement_directeur,
-                                               'glyphicon glyphicon-remove text-danger': !etat_heure.validation_recrutement_directeur}"></span>
+                                       'glyphicon glyphicon-remove text-danger': !etat_heure.validation_recrutement_directeur}"></span>
 
                         <a href="/recruitment/v1/impression_etat_heure/{{ etat_heure.id }}">Impression</a>
 
                     </td>
                     <td>
                         <ul>
-                            <li ng-repeat="(key, etapes) in etat_heure.list_ec">{{ key }}
+                            <li ng-repeat="(key, ecs) in etat_heure.ec">{{ key }}
                                 <ul>
-                                    <li ng-repeat="(key, etape) in etapes"><a href="#/etapes/{{ key }}">{{ key }}</a>
-                                        <ul>
-                                            <li ng-repeat="ec in etape">{{ ec.ec__code_ec }} {{ ec.ec__lib_ec }}
-                                                <span ng-if="ec._forfait != null" class="text-info  ">Forfait : {{ ec._forfait }}</span>
-                                                <span class="text-danger" ng-if="ec._forfait == null">Pas de forfait renseigné</span>
-                                                <span ng-if="ec._rattachement != null" class="text-info  "> Rattachement : {{ ec._rattachement }}</span>
-                                                <span class="text-danger" ng-if="ec._rattachement == null"> Pas de forfait renseigné</span>
-                                            </li>
-                                        </ul>
+                                    <li ng-repeat="ec in ecs">
+                                        <a href="#/etapes/{{ ec.ec__etape__cod_etp }}">{{ ec.ec__etape__cod_etp }}</a>
+                                        <a href="#/etapes/{{ ec.ec__etape__cod_etp }}/{{ ec.ec__code_ec }}">{{ ec.ec__code_ec }}</a>{{ ec.ec__code_ec }} {{ ec.ec__lib_ec }}
+                                        <span ng-if="ec._forfait != null" class="text-info  ">Forfait : {{ ec._forfait }}</span>
+                                        <span class="text-danger" ng-if="ec._forfait == null">Pas de forfait renseigné</span>
+                                        <span ng-if="ec._rattachement != null" class="text-info  "> Rattachement : {{ ec._rattachement }}</span>
+                                        <span class="text-danger" ng-if="ec._rattachement == null"> Pas de forfait renseigné</span>
                                     </li>
                                 </ul>
                             </li>

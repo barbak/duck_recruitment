@@ -103,7 +103,7 @@ class EtatHeureViewSet(viewsets.ModelViewSet):
 
 
 class AllEcAnnuelViewSet(viewsets.ModelViewSet):
-    queryset = AllEcAnnuel.objects.select_related('agent').all()
+    queryset = AllEcAnnuel.objects.select_related('agent').prefetch_related('etatheure_set').all()
     serializer_class = AllEcAnnuelSerializer
 
 

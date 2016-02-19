@@ -26,18 +26,15 @@ myApp.controller('AgentCtrl', ['$rootScope', '$scope','all_ec_annuel', 'Etape', 
             $scope.agent = data;
 
         });
-
         $scope.all_ec_annuel = all_ec_annuel;
-
-        angular.forEach(all_ec_annuel.list_ec, function(element){
-           angular.forEach(element, function(element){
-               angular.forEach(element, function(element) {
-                   RecrutementService.etat_heure.get({id: element.id}, function(data){
-                      element.id = data;
-                   });
+        angular.forEach(all_ec_annuel.ec, function(element){
+           angular.forEach(element, function(element) {
+               RecrutementService.etat_heure.get({id: element.id}, function(data){
+                  element.id = data;
                });
            });
         });
+
         $scope.reset = function(id){
             id.date_validation_rattrapage=null;
             id.$update();

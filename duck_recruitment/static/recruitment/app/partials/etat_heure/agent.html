@@ -22,98 +22,112 @@
     </div>
     <div class="well">
         <div class="panel panel-default">
-              <div class="panel-heading">
+            <div class="panel-heading">
                 <h3 class="panel-title">Information personnel</h3>
-              </div>
-              <div class="panel-body">
-                  <ul ng-repeat="adresse in agent.adresses">
-                      <li>Adresse : {{ adresse.adresse }} {{ adresses.voie }}{{ adresse.adresse_suite }}
-                          {{ adresse.cp }} {{ adresse.commune }}</li>
-                      <li>Téléphone portable : {{ adresse.portable }}</li>
-                      <li>Téléphone fixe : {{ adresse.telephone }}</li>
-                  </ul>
-                  <table class="table table-bordered">
-                      <tr>
-                          <td>Validation directeur
-                              <label ng-if="user.is_superuser" ng-class="{'text-danger': !all_ec_annuel.validation_recrutement_directeur, 'text-success': all_ec_annuel.validation_recrutement_directeur}">
-                                  <input type="checkbox"  ng-model="all_ec_annuel.validation_recrutement_directeur">
-                              </label>
+            </div>
+            <div class="panel-body">
+                <ul ng-repeat="adresse in agent.adresses">
+                    <li>Adresse : {{ adresse.adresse }} {{ adresses.voie }}{{ adresse.adresse_suite }}
+                        {{ adresse.cp }} {{ adresse.commune }}</li>
+                    <li>Téléphone portable : {{ adresse.portable }}</li>
+                    <li>Téléphone fixe : {{ adresse.telephone }}</li>
+                </ul>
+                <table class="table table-bordered">
+                    <tr>
+                        <td>Validation directeur
+                            <label ng-if="user.is_superuser"
+                                   ng-class="{'text-danger': !all_ec_annuel.validation_recrutement_directeur, 'text-success': all_ec_annuel.validation_recrutement_directeur}">
+                                <input type="checkbox" ng-model="all_ec_annuel.validation_recrutement_directeur">
+                            </label>
                               <span ng-class="{'glyphicon glyphicon-ok text-success': all_ec_annuel.validation_recrutement_directeur,
                                                'glyphicon glyphicon-remove text-danger': !all_ec_annuel.validation_recrutement_directeur}"
                                     ng-if="!user.is_superuser"></span>
-                          </td>
-                          <td><a ng-if="user.is_superuser" class="btn btn-primary" ng-click="all_ec_annuel_udpdate(all_ec_annuel)">Enregistrer</a></td>
-                      </tr>
-                  </table>
+                        </td>
+                        <td><a ng-if="user.is_superuser" class="btn btn-primary"
+                               ng-click="all_ec_annuel_udpdate(all_ec_annuel)">Enregistrer</a></td>
+                    </tr>
+                    <tr><td>Detail du forfait pour l'ensemble des ecs (permier, second, total) :
+                    <span ng-if="all_ec_annuel.detail_forfait!=null"
+                                          class="text-info  "> {{all_ec_annuel.detail_forfait.premier_semestre }}</span> |
+                                    <span ng-if="all_ec_annuel.detail_forfait!=null"
+                                          class="text-info  "> {{ all_ec_annuel.detail_forfait.deuxieme_semestre }}</span> |
+                                    <span ng-if="all_ec_annuel.detail_forfait!=null" class="text-info  "> {{ all_ec_annuel.detail_forfait.total }}</span>
 
-              </div>
+                </table>
+
+            </div>
         </div>
         <div class="panel panel-default">
-              <div class="panel-heading">
-            <h3 class="panel-title">Ec attribués pour l'année en cours</h3>
-              </div>
-              <div class="panel-body">
-                  <ul>
-                  <li ng-repeat="(key, etapes) in all_ec_annuel.list_ec">{{ key }}
-                        <ul>
-                            <li ng-repeat="(key, etape) in etapes">{{ key }}
-                                <table class="table table-bordered">
-                                    <tr>
-                                        <td>Ec</td>
-                                        <td>Posséde le forfait</td>
-                                        <td>Coef</td>
-                                        <td>Heure Statutaire</td>
-                                        <td>Forfait (avec detail) : premier/deuxième/total</td>
-                                        <td>Rattachement / proratisation</td>
-                                        <td>Validation du directeur</td>
-                                        <td>Date de validation</td>
+            <div class="panel-heading">
+                <h3 class="panel-title">Ec attribués pour l'année en cours</h3>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    <li ng-repeat="(key, ecs) in all_ec_annuel.ec">{{ key }}
 
-                                    </tr>
-                                    <tr ng-repeat="ec in etape">
-                                        <td>{{ ec.ec__code_ec }} {{ ec.ec__lib_ec }}</td>
-                                        <td>
-                                            <label ng-if="user.is_superuser">
-                                              <input type="checkbox"  ng-model="ec.id.forfaitaire">
-                                            </label>
-                                            <span ng-class="{'glyphicon glyphicon-ok text-success': ec.id.forfaitaire,
-                                               'glyphicon glyphicon-remove text-danger': !ec.id.forfaitaire}" ng-if="!user.is_superuser"></span>
-                                        </td>
-                                        <td>
-                                            <input ng-if="user.is_superuser" type="text" ng-model="ec.id.coeff">
-                                            <span ng-if="!user.is_superuser"> {{ ec.id.coeff }}</span>
-                                        </td>
-                                        <td>
-                                            <input ng-if="user.is_superuser" type="text" ng-model="ec.id.heure_statutaire">
-                                            <span ng-if="!user.is_superuser"> {{ ec.id.heure_statutaire }}</span>
-                                        </td>
-                                        <td>
-                                            <span ng-if="ec.id._forfait!=null" class="text-info  "> {{ ec.id.detail_forfait.premier_semestre }}</span> |
-                                            <span ng-if="ec.id._forfait!=null" class="text-info  "> {{ ec.id.detail_forfait.deuxieme_semestre }}</span> |
-                                            <span ng-if="ec.id._forfait!=null" class="text-info  "> {{ ec.id._forfait }}</span>
-                                            <span class="text-danger" ng-if="ec.id._forfait==null">Pas de forfait renseigné</span>
-                                        </td>
-                                        <td><span ng-if="ec.id._rattachement != null" class="text-info  "> Rattachement : {{ ec.id._rattachement }}</span>
-                                        </td>
-                                        <td>
-                                            <label ng-if="user.is_superuser" ng-class="{'text-danger': !ec.id.is_valid_rattrapage, 'text-success': ec.id.is_valid_rattrapage}">
-                                              <input type="checkbox"  ng-model="ec.id.is_valid_rattrapage">
-                                            </label>
-                                            <span ng-class="{'glyphicon glyphicon-ok text-success': ec.id.is_valid_rattrapage,
-                                               'glyphicon glyphicon-remove text-danger': !ec.id.is_valid_rattrapage}" ng-if="!user.is_superuser"></span>
-                                        </td>
-                                        <td>{{ ec.id.date_validation_rattrapage }}</td>
-                                        <td>
-                                            <a ng-if="user.is_superuser" class="btn btn-primary" ng-click="ec.id.$update()">Enregistrer</a>
-                                            <a ng-if="!ec.id.is_valid_rattrapage && ec.id.date_validation_rattrapage && user.is_superuser" class="btn btn-warning" ng-click="reset(ec.id)">Reset</a>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>Ec</td>
+                                <td>Posséde le forfait</td>
+                                <td>Coef</td>
+                                <td>Heure Statutaire</td>
+                                <td>Forfait (avec detail) : premier/deuxième/total</td>
+                                <td>Rattachement / proratisation</td>
+                                <td>Validation du directeur</td>
+                                <td>Date de validation</td>
 
-                                        </td>
-                                    </tr>
-                                </table>
-                            </li>
-                        </ul>
-                      </li>
-                    </ul>
-              </div>
+                            </tr>
+                            <tr ng-repeat="ec in ecs">
+                                <td>{{ ec.ec__code_ec }} {{ ec.ec__lib_ec }}</td>
+                                <td>
+                                    <label ng-if="user.is_superuser">
+                                        <input type="checkbox" ng-model="ec.id.forfaitaire">
+                                    </label>
+                                    <span ng-class="{'glyphicon glyphicon-ok text-success': ec.id.forfaitaire,
+                                       'glyphicon glyphicon-remove text-danger': !ec.id.forfaitaire}"
+                                          ng-if="!user.is_superuser"></span>
+                                </td>
+                                <td>
+                                    <input ng-if="user.is_superuser" type="text" ng-model="ec.id.coeff">
+                                    <span ng-if="!user.is_superuser"> {{ ec.id.coeff }}</span>
+                                </td>
+                                <td>
+                                    <input ng-if="user.is_superuser" type="text" ng-model="ec.id.heure_statutaire">
+                                    <span ng-if="!user.is_superuser"> {{ ec.id.heure_statutaire }}</span>
+                                </td>
+                                <td>
+                                    <span ng-if="ec.id._forfait!=null"
+                                          class="text-info  "> {{ ec.id.detail_forfait.premier_semestre }}</span> |
+                                    <span ng-if="ec.id._forfait!=null"
+                                          class="text-info  "> {{ ec.id.detail_forfait.deuxieme_semestre }}</span> |
+                                    <span ng-if="ec.id._forfait!=null" class="text-info  "> {{ ec.id._forfait }}</span>
+                                    <span class="text-danger"
+                                          ng-if="ec.id._forfait==null">Pas de forfait renseigné</span>
+                                </td>
+                                <td><span ng-if="ec.id._rattachement != null"
+                                          class="text-info  "> Rattachement : {{ ec.id._rattachement }}</span>
+                                </td>
+                                <td>
+                                    <label ng-if="user.is_superuser"
+                                           ng-class="{'text-danger': !ec.id.is_valid_rattrapage, 'text-success': ec.id.is_valid_rattrapage}">
+                                        <input type="checkbox" ng-model="ec.id.is_valid_rattrapage">
+                                    </label>
+                                    <span ng-class="{'glyphicon glyphicon-ok text-success': ec.id.is_valid_rattrapage,
+                                       'glyphicon glyphicon-remove text-danger': !ec.id.is_valid_rattrapage}"
+                                          ng-if="!user.is_superuser"></span>
+                                </td>
+                                <td>{{ ec.id.date_validation_rattrapage }}</td>
+                                <td>
+                                    <a ng-if="user.is_superuser" class="btn btn-primary" ng-click="ec.id.$update()">Enregistrer</a>
+                                    <a ng-if="!ec.id.is_valid_rattrapage && ec.id.date_validation_rattrapage && user.is_superuser"
+                                       class="btn btn-warning" ng-click="reset(ec.id)">Reset</a>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="modal-footer">

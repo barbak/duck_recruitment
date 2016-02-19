@@ -6,6 +6,8 @@ from rest_framework import serializers
 from .models import CCOURS_Individu, Agent, Ec, EtapeVet, AllEcAnnuel, EtatHeure, Titulaire, InvitationEc, TypeEtatHeure, \
     TypeEc, HeureForfait, PropEc
 from django.core import serializers as seria
+from collections import defaultdict
+
 
 class CCOURS_IndividuSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
@@ -30,39 +32,36 @@ class TitulaireSerializer(serializers.ModelSerializer):
 
 class AllEcAnnuelSerializer(serializers.ModelSerializer):
     info_perso = serializers.SerializerMethodField()
-    list_ec = serializers.SerializerMethodField()
     type_agent = serializers.SerializerMethodField()
     etatheure_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    ec = serializers.SerializerMethodField()
+    detail_forfait = serializers.SerializerMethodField()
 
+    def get_detail_forfait(self, obj):
+        # type: (AllEcAnnuel) -> dict
+        return obj.detail_forfait()
 
     def get_info_perso(self, obj):
+        # type: (AllEcAnnuel) -> unicode
         return '{} {} {}'.format(obj.agent.last_name, obj.agent.first_name, obj.agent.email.lower())
 
     def get_type_agent(self, obj):
+        # type: (AllEcAnnuel) -> unicode
         return '{}'.format(obj.agent.type)
 
-    def get_list_ec(self, obj):
-        """
-        récupére les ec trier par etape, regroupe par diplome
-        :param obj: Ec
-        :return: un dico
-        """
-        r = {}
-        ecs = obj.etatheure_set.order_by('ec__etape__cod_etp').values('id', 'ec__code_ec', 'ec__lib_ec', 'ec__etape__cod_etp',
-                                                                      '_forfait', '_rattachement')
-        for ec in ecs:
-
-            if ec['ec__etape__cod_etp'] not in r:
-                r[ec['ec__etape__cod_etp']] = [ec]
-            else:
-                r[ec['ec__etape__cod_etp']].append(ec)
+    def get_ec(self, obj):
+        # type: (AllEcAnnuel) -> dict
         result = {}
-        for key, etape in r.items():
-            v = key[0] + key[2:]
-            if v not in result:
-                result[v] = {key: etape}
+        for ec in obj.etatheure_set.values('id', 'ec__code_ec', 'ec__lib_ec', 'ec__etape__cod_etp',
+                                 '_forfait', '_rattachement').distinct('id'):
+
+            if ec['ec__etape__cod_etp'][0] == 'M':  # il s'agit d'un master
+                result.setdefault('master', []).append(ec)
+
+            elif  ec['ec__etape__cod_etp'][0] == 'L':
+                result.setdefault('licence', []).append(ec)
             else:
-                result[v][key] = etape
+                result.setdefault(ec['ec__etape__cod_etp'], []).append(ec)
         return result
 
     class Meta:

@@ -236,6 +236,17 @@ class AllEcAnnuel(models.Model):
     date_creation = models.DateField(auto_now_add=True)
     validation_recrutement_directeur = models.BooleanField(default=False)
 
+    def detail_forfait(self):
+        result = {'deuxieme_semestre': 0, 'total': 0, 'premier_semestre': 0}
+
+        for etat in self.etatheure_set.all():
+            r = etat.detail_forfait()
+            if r:
+                result['premier_semestre'] += r['premier_semestre']
+                result['deuxieme_semestre'] += r['deuxieme_semestre']
+                result['total'] += r['total']
+        return result
+
     def all_ec_lib(self):
         return ['{} {} {}'.format(ec.ec.code_ec, ec.ec.lib_ec.encode("ascii", "ignore"), ec.etps)
                 for ec in self.etatheure_set.all()]

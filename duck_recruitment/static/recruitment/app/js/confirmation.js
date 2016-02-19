@@ -10,6 +10,7 @@ var myApp = angular.module('confirmationApp', [
         base_template: '/static/recruitment/app/partials/'
     });
 
+
 myApp.config(['$routeProvider', '$httpProvider',
     function ($routeProvider, $httpProvider) {
         $routeProvider.

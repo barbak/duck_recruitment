@@ -11,7 +11,7 @@ myApp.config(['$routeProvider', '$httpProvider',
                 templateUrl: '/static/recruitment/app/partials/home.html',
                 controller: 'RecruitmentCtrl'
             }).
-            when('/etapes/:cod_etp?', {
+            when('/etapes/:cod_etp?/:cod_ec?', {
                 templateUrl: '/static/recruitment/app/partials/edit_etape.html',
                 controller: 'EtapesCtrl'
             }).

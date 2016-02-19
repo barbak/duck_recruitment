@@ -246,6 +246,7 @@ myApp.controller('InvitationCtrl',
 myApp.controller('EtapesCtrl', ['$scope','$routeParams', 'Etape', '$filter','Ec','$modal', 'RecrutementService',
     function($scope, $routeParams, Etape, $filter, Ec, $modal, RecrutementService){
         var cod_etp = $routeParams.cod_etp;
+        $scope.search= $routeParams.cod_ec;
     $scope.monEtape = null;
     $scope.choix_prop_ec = [
         {choix:'0', label: 'Annuel'},
