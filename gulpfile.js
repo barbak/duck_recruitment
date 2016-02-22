@@ -24,7 +24,7 @@ gulp.task('app', function() {
   return gulp.src(paths.lib)
     .pipe(plumber())
     .pipe(concat('app.min.js'))
-      .pipe(uglify())
+      // .pipe(uglify())
     .pipe(gulp.dest('duck_recruitment/static/recruitment/app/js/'));
 });
 // Copie des images statiques avec optimisation
