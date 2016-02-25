@@ -274,3 +274,29 @@ class EtatHeurePdfView(View):
 
         # response.write(getattr(wish, self.fonction_impression)(request=self.request, context=context))
         return response
+
+class DownloadEtatHeure(View):
+
+    def get(self, request, *args, **kwargs):
+        all_ec_annuel = AllEcAnnuel.objects.all()
+        response = HttpResponse(save_virtual_workbook(self.create_spreadsheet(all_ec_annuel)),
+                                content_type='application/vnd.ms-excel')
+        date = datetime.today().strftime('%d-%m-%Y')
+        response['Content-Disposition'] = 'attachment; filename={}_{}.xlsx'.format('etat_heure', date,)
+        return response
+
+    def create_spreadsheet(self, ecs_annuels):
+        wb = Workbook()
+        ws = wb.active
+        ws.append(["Agent",#"Nom Patronimique", "Nom Epoux", "Prenom",
+                   "Premier semestre", "Deuxième semestre",
+                   "Total", "ECS"])
+        for ec_annuel in ecs_annuels:
+            detail_forfait = ec_annuel.detail_forfait()
+            ecs = ['{} {}'.format(ec.ec.code_ec, ec.ec.lib_ec)
+                   for ec in ec_annuel.etatheure_set.all()]
+            ws.append([str(ec_annuel.agent),
+                       detail_forfait['premier_semestre'], detail_forfait['deuxieme_semestre'],
+                       detail_forfait['total'], "\n".join(ecs)])
+
+        return wb
