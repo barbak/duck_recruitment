@@ -33,6 +33,7 @@ xadmin.site.register(Titulaire)
 xadmin.site.register(TypeActe)
 
 
+
 class TypeEcsAdmin(object):
     model = TypeEc
     style = 'table'
