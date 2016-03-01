@@ -29,5 +29,5 @@ urlpatterns = [
     url(r'^v1/impression_etat_heure/(?P<pk>\d+)/$', views.EtatHeurePdfView.as_view(), name='impression_etat_heure'),
     url(r'^confirme_invitation/(?P<pk>\d+)/$', TemplateView.as_view(template_name='confirmation_invitation.html')),
     url(r'^v1/summary', views.SummaryView.as_view()),
-
+    url(r'^v1/download_etat_heure', views.DownloadEtatHeure.as_view()),
 ]
