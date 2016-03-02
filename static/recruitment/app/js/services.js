@@ -8,6 +8,7 @@ servicesRecrutement.factory('Etape', ['$resource',
     function($resource){
         return $resource('/recruitment/v1/etapes/:etapeId', {}, {
             query: {method: 'GET', params: {etapeId: '@etapeId'}, isArray: true}
+
         })
     }]);
 

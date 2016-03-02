@@ -291,6 +291,13 @@ myApp.controller('EtapesCtrl', ['$scope','$routeParams', 'Etape', '$filter','Ec'
                $scope.types_ec = data;
             });
         });
+        $scope.save_all = function(ecs){
+          angular.forEach(ecs, function (ec) {
+              ec.prop_ec.$update();
+              $scope.update_ec(ec);
+          });
+        };
+        
     $scope.modify_etape = function(etape){
         var modalInstance = $modal.open({
             templateUrl: '/static/recruitment/app/partials/update_etape.html',
