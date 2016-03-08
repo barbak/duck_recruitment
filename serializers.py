@@ -156,9 +156,15 @@ class AgentSerializer(serializers.ModelSerializer):
 class EcSerializer(serializers.ModelSerializer):
     etat_heure = serializers.SerializerMethodField()
     invitation = serializers.SerializerMethodField()
+    tronc_commun = serializers.SerializerMethodField()
 
     class Meta:
         model = Ec
+
+    def get_tronc_commun(self, obj):
+        if obj.etape.count() > 1:
+            return "oui"
+        return 'non'
 
     def get_etat_heure(self, obj):
         return EtatHeureSerializer(EtatHeure.objects.filter(ec=obj.pk),
