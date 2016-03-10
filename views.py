@@ -11,7 +11,7 @@ from rest_framework import views
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
-from duck_recruitment.filters import EcFilter, CcourIndividuFilter, EtatHeureFilter, TitulaireFilter, InvitationEcFilter, \
+from .filters import EcFilter, CcourIndividuFilter, EtatHeureFilter, TitulaireFilter, InvitationEcFilter, \
     TypeEcFilter, HeureForfaitFilter, PropEcFilter
 from .models import CCOURS_Individu, Ec, Agent, EtapeVet, EtatHeure, AllEcAnnuel, Titulaire, \
     InvitationEc, TypeEtatHeure, TypeEc, HeureForfait, PropEc  # , BaseIndividu
@@ -42,9 +42,8 @@ class CCOURS_IndividuViewSet(viewsets.ReadOnlyModelViewSet):
     filter_class = CcourIndividuFilter
 
     def list(self, request, *args, **kwargs):
-
-        data_c = self.get_result(CCOURS_Individu.objects.using('ccours').all(), CcourIndividuFilter, CCOURS_IndividuSerializer)
-        data_tit = self.get_result(Titulaire.objects.all(), TitulaireFilter, TitulaireSerializer)
+        data_c = self.get_result(CCOURS_Individu.objects.using('ccours').all().order_by('nom_pat'), CcourIndividuFilter, CCOURS_IndividuSerializer)
+        data_tit = self.get_result(Titulaire.objects.all().order_by('nom_pat'), TitulaireFilter, TitulaireSerializer)
 
         return self.get_paginated_response(data_c+data_tit)
 

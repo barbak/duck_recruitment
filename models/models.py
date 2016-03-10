@@ -284,6 +284,7 @@ class EtatHeure(models.Model):
     all_ec_annuel = models.ForeignKey(AllEcAnnuel)
     ec = models.ForeignKey(Ec)
     coeff = models.FloatField(null=True, blank=True, default=1)
+    forfait_si_different = models.FloatField(null=True, blank=True, default=1)
     forfaitaire = models.BooleanField(default=True)
     heure_statutaire = models.FloatField(default=0)
     nombre_heure_estime = models.FloatField(null=True, blank=True)
